@@ -11,7 +11,7 @@ public class Main {
         Employees = new Employee[10];
         Customers = new Customer[10];
 
-        // Creates the BabyGeese threads
+        // Creates the threads
         for (int i = 0; i < 10; i++) {
             Managers[i] = new Manager(Integer.toString(i));
             Employees[i] = new Employee(Integer.toString(i));
