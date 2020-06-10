@@ -14,7 +14,6 @@ public class Main {
     public static Queue<Customer> CUSTOMER_QUEUE = new LinkedList<>();
 
     public static void main(String[] args){
-        boolean InputTaken = false;
             try {
                 NumCustomers = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
