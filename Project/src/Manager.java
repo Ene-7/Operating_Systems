@@ -1,12 +1,12 @@
 
 
 public class Manager implements Runnable{
-    private String Name;
+    private String name;
     private Thread ManagerThread;
 
     Manager(String Num){
-        this.Name = "Manager_" + Num;
-        this.ManagerThread = new Thread();
+        this.name = "Manager_" + Num;
+        this.ManagerThread = new Thread(this, name);
     }
 
     public void start() {

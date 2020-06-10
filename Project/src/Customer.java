@@ -1,12 +1,12 @@
 
 
 public class Customer implements Runnable {
-    private String Name;
+    private String name;
     private Thread CustomerThread;
 
     Customer(String Num){
-        this.Name = "Customer_" + Num;
-        this.CustomerThread = new Thread();
+        this.name = "Customer_" + Num;
+        this.CustomerThread = new Thread(this, name);
     }
 
     public void start() {
