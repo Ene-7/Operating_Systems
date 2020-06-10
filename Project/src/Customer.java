@@ -10,10 +10,10 @@ public class Customer implements Runnable {
         this.CustomerThread = new Thread(this, name);
     }
 
+
     public void setName(String in){
         this.name = in;
     }
-
     public String getName(){
         return this.name;
     }
@@ -32,8 +32,8 @@ public class Customer implements Runnable {
         catch (InterruptedException e) {
             e.printStackTrace();
         } // This will simulate an arrival time from 1 to 120 seconds (2 Minutes).
-        msg("Has arrived at the stores' parking lot, and is ready to see if they can go in.");
-
+        msg("Has arrived at the stores' parking lot, and is now in the queue waiting to go in.");
+        Main.CUSTOMER_QUEUE.add(this); // Customer Object added to the Queue Located in Main.
         //TODO: Busy Wait until store has space available to allow 6 customers inside to shop.
         // Busy Wait code here... Make sure they get in a FCFS order.
 
@@ -41,6 +41,8 @@ public class Customer implements Runnable {
 
     }
 
+
+    //Message method suggested and provided by the assignment.
     public void msg(String m) {
         System.out.println("["+(System.currentTimeMillis()-Main.time)+"] "+getName()+": "+m);
     }
