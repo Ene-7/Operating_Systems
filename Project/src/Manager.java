@@ -16,7 +16,7 @@ public class Manager implements Runnable{
     @Override
     public void run() {
         //TODO Fill in this with functions of Manager
-        while(true){
+        while(Store.CUSTOMER_QUEUE.size() != 6){
             //Todo Implement Thread wait for all Customers and Employees to leave.
         }
     }
@@ -29,9 +29,8 @@ public class Manager implements Runnable{
         return this.name;
     }
 
-
     public void msg(String m) {
-        System.out.println("["+(System.currentTimeMillis()-Main.time)+"] "+getName()+": "+m);
+        System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName()+": "+m);
     }
 
 }

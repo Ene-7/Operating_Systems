@@ -26,6 +26,6 @@ public class Employee implements Runnable {
     }
 
     public void msg(String m) {
-        System.out.println("["+(System.currentTimeMillis()-Main.time)+"] "+getName()+": "+m);
+        System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName()+": "+m);
     }
 }
