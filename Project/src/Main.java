@@ -10,8 +10,8 @@ public class Main {
     private static Employee[] Employees;
     private static Customer[] Customers;
     public static int NumCustomers;
-    public static int Store_Capacity = 6;
-    public static int NumSelf_Checkout = 4;
+    public static final int Store_Capacity = 6;
+    public static final int NumSelf_Checkout = 4;
     public static long time = System.currentTimeMillis();
     public static Queue<Customer> CUSTOMER_QUEUE = new LinkedList<>();
     public static AtomicInteger CUSTOMERS_SHOPPING = new AtomicInteger(0);
@@ -25,19 +25,19 @@ public class Main {
             } // As requested, the number of Customers will be specified by an argument value.
 
         // Creates an array for 10 BabyGeese threads
-        Managers = new Manager[1]; // review count
-        Employees = new Employee[3]; //review count
+        Managers = new Manager[0]; // review count
+        Employees = new Employee[0]; //review count
         Customers = new Customer[NumCustomers];
 
         // Creates the threads
         for (int i = 0; i < Managers.length; i++) {
-            Managers[i] = new Manager(Integer.toString(i));
+            Managers[i] = new Manager(Integer.toString(i+1));
         }
         for(int i = 0; i < Employees.length; i++){
-            Employees[i] = new Employee(Integer.toString(i));
+            Employees[i] = new Employee(Integer.toString(i+1));
         }
         for(int i = 0; i < Customers.length; i++){
-            Customers[i] = new Customer(Integer.toString(i));
+            Customers[i] = new Customer(Integer.toString(i+1));
         }
 
         // Starts the threads
