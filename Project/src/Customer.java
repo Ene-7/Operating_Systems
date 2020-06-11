@@ -33,8 +33,11 @@ public class Customer implements Runnable {
         msg("I've arrived at the stores' parking lot, and I'm now in the queue waiting to go in.");
         Main.CUSTOMER_QUEUE.add(this); // Customer Object added to the Queue Located in Main.
 
+        //TODO: Add another busy wait if the store is still not open, need to wait for Manager and employees to show up first.g
+
+
         //TODO: Busy Wait until store has space available to allow 6 customers inside to shop.
-        // Busy Wait code here... Make sure they get in a FCFS order.
+        // Busy Wait code here... Make sure they get in a FCFS order. This section Should be done by the code below:
 
 
         while(Main.CUSTOMERS_SHOPPING.get() >= Main.Store_Capacity){
