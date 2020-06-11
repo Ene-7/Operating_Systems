@@ -16,6 +16,9 @@ public class Manager implements Runnable{
     @Override
     public void run() {
         //TODO Fill in this with functions of Manager
+        while(true){
+            //Todo Implement Thread wait for all Customers and Employees to leave.
+        }
     }
 
     public void setName(String in){

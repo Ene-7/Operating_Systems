@@ -16,16 +16,16 @@ public class Main {
     public static void main(String[] args){
             try {
                 NumCustomers = Integer.parseInt(args[0]);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 e.printStackTrace();
-                System.out.println("Invalid Input. Please Try Again.");
-            }
+                System.out.println("Invalid Input. Input Should Be An Integer Value. Please Reconfigure The Arguments And Try Again.");
+            } // As requested, the number of Customers will be specified by an argument value.
 
 
         // Creates an array for 10 BabyGeese threads
-        Managers = new Manager[10];
-        Employees = new Employee[10];
-        Customers = new Customer[10];
+        Managers = new Manager[1];
+        Employees = new Employee[3];
+        Customers = new Customer[NumCustomers];
 
         // Creates the threads
         for (int i = 0; i < 10; i++) {
@@ -38,7 +38,6 @@ public class Main {
             Managers[i].start();
         }
     }
-
 
     // Random method that will decide the sleep times for Customers,
     // placed in main if it's needed elsewhere globally.
