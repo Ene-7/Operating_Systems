@@ -23,8 +23,8 @@ public class Main {
 
 
         // Creates an array for 10 BabyGeese threads
-        Managers = new Manager[1];
-        Employees = new Employee[3];
+        Managers = new Manager[1]; // review count
+        Employees = new Employee[3]; //review count
         Customers = new Customer[NumCustomers];
 
         // Creates the threads

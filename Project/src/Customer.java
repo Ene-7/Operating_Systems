@@ -37,7 +37,7 @@ public class Customer implements Runnable {
         //TODO: Busy Wait until store has space available to allow 6 customers inside to shop.
         // Busy Wait code here... Make sure they get in a FCFS order.
 
-        //TODO:
+        //TODO: Customer queue 6 at a time
 
     }
 
