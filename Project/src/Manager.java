@@ -15,10 +15,16 @@ public class Manager implements Runnable{
 
     @Override
     public void run() {
-        //TODO Fill in this with functions of Manager
-        while(Store.CUSTOMER_QUEUE.size() != 6){
-            //Todo Implement Thread wait for all Customers and Employees to leave.
+        //"Randomly determine when the Manager opens the store"
+        try {
+            this.ManagerThread.sleep(Store.RandomTime(200, 800));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        msg("The store is now open! Come in everyone. Remember to stay 6 feet apart!");
+        Store.STORE_IS_OPEN.set(true); // Sets the store to open.
+
+
     }
 
     public void setName(String in){

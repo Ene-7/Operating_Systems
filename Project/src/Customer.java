@@ -50,6 +50,12 @@ public class Customer implements Runnable {
         Store.CUSTOMERS_SHOPPING.getAndIncrement(); // Add 1 to the Counter of shoppers to prevent others from coming in if there's 6 inside.
         msg("I'm finally inside and can shop. I better stay away from others, they could be sick!");
 
+        //Simulate Shop Time
+        try {
+            this.CustomerThread.sleep(Store.RandomTime(200,1000));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
