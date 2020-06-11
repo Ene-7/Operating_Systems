@@ -4,7 +4,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-w
+
 public class Store {
     private static Manager[] Managers;
     private static Employee[] Employees;
