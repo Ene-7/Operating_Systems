@@ -41,22 +41,25 @@ public class Customer implements Runnable {
         catch (InterruptedException e) {
             e.printStackTrace();
         }
-        msg("I've arrived at the stores' parking lot, and I'm now in the queue waiting to go in.");
         Store.CUSTOMER_QUEUE.add(this); // Customer Object added to the Queue Located in Main.
+        msg("I've arrived at the stores' parking lot, and I'm now in the queue waiting to go in.");
 
-        //TODO: Add another busy wait if the store is still not open, need to wait for Manager and employees to show up first.g
+
+        // busy wait if the store is still not open, need to wait for Manager and employees to show up first.
         while(!Store.STORE_IS_OPEN.get()){
             // Busy wait until store opens. Manager must open up the store, once there are enough people waiting.
         }
 
-        //TODO: Busy Wait until store has space available to allow 6 customers inside to shop.
-        // Busy Wait code here... Make sure they get in a FCFS order. This section Should be done by the code below:
+        // Busy Wait until store has space available to allow 6 customers inside to shop.
+        // Make sure they get in a FCFS order.
 
         Customer ME = Store.CUSTOMER_QUEUE.peek(); // Identify the First Most Customer To Ensure First Come First Serve Order
+        while(!ME.equals(this)){
+            ME = Store.CUSTOMER_QUEUE.peek(); // Keep checking who's supposed to go, wait if it's not your turn
+        }
 
-        while (Store.CUSTOMERS_SHOPPING.get() == Store.Store_Capacity || !ME.equals(this)) {
+        while (Store.CUSTOMERS_SHOPPING.get() == Store.Store_Capacity) {
             // Busy Wait if there are 6 people shopping in the store exit once there is space.
-            ME = Store.CUSTOMER_QUEUE.peek(); // Keep checking who's supposed to go next
         }
         Store.CUSTOMER_QUEUE.remove(ME); //Remove the one identified from the queue.
         Store.CUSTOMERS_SHOPPING.getAndIncrement(); // Add 1 to the Counter of shoppers to prevent others from coming in if there's 6 inside.
@@ -65,10 +68,14 @@ public class Customer implements Runnable {
 
         //Simulate Shop Time
         try {
-            this.CustomerThread.sleep(Store.RandomInt(200,1000));
+            this.CustomerThread.sleep(Store.RandomInt(30000,60000)); // 30 to 60 seconds
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        //TODO ADD CHECKOUT STUFF HERE: WILL HAVE TO CALL IN EMPLOYEE SOMEHOW MAYBE ANOTHER ATOMIC BOOLEAN?
+
+        Store.CUSTOMERS_SHOPPING.getAndDecrement(); //Remove the shopper form shopping
     }
 
 
