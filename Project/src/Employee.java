@@ -1,5 +1,3 @@
-import java.util.Random;
-
 public class Employee implements Runnable {
     private String name;
     private Thread EmployeeThread;
@@ -24,7 +22,7 @@ public class Employee implements Runnable {
     @Override
     public void run() {
         try {
-            this.EmployeeThread.sleep(Store.RandomTime(1000,1200));
+            this.EmployeeThread.sleep(Store.RandomInt(1000,1200));
             // Random Sleep Time to simulate Arrival To Work.
         } catch (InterruptedException e) {
             e.printStackTrace();

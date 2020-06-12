@@ -2,6 +2,7 @@
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -9,7 +10,7 @@ public class Store {
     private static Manager[] Managers;
     private static Employee[] Employees;
     private static Customer[] Customers;
-    public static int NumCustomers; // Number of total customers that will be shopping, provided as an input argument
+    private static int NumCustomers; // Number of total customers that will be shopping, provided as an input argument
     public static final int Store_Capacity = 6; // How many people can shop at a time
     public static final int NumSelf_Checkout = 4; // Number of Self Checkout registers
     public static long time = System.currentTimeMillis(); // The start of the Main/Store Thread.
@@ -38,7 +39,7 @@ public class Store {
             Employees[i] = new Employee(Integer.toString(i+1));
         }
         for(int i = 0; i < Customers.length; i++){
-            Customers[i] = new Customer(Integer.toString(i+1));
+            Customers[i] = new Customer(Integer.toString(i+1), RandomInt(1,4));
         }
 
         // Starts the threads
@@ -57,7 +58,7 @@ public class Store {
 
     // Random method that will decide the sleep times for Customers,
     // placed in main/store if it's needed elsewhere globally.
-    public static int RandomTime(int min, int max) {
+    public static int RandomInt(int min, int max) {
         Random rand = new Random();
         return rand.nextInt((max - min) + 1) + min;
     }
