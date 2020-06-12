@@ -16,6 +16,7 @@ public class Store {
     public static Queue<Customer> CUSTOMER_QUEUE = new LinkedList<>(); //Customers waiting to get in and shop.
     public static AtomicInteger CUSTOMERS_SHOPPING = new AtomicInteger(0); // Number of Current Shoppers inside the store. Atomic Integer to keep it thread safe.
     public static AtomicBoolean STORE_IS_OPEN =  new AtomicBoolean(false); // Store Starts off Closed. Must be opened up by the Manager once he sees enough people lining up.
+    public static AtomicBoolean EMPLOYEE_IS_HERE =  new AtomicBoolean(false); // Is the Employee at work yet? (Used in Manager class to open up store).
 
     public static void main(String[] args){
             try {
@@ -26,7 +27,7 @@ public class Store {
             } // As requested, the number of Customers will be specified by an argument value.
 
         Managers = new Manager[1]; // Only one manager is referenced in the assignment, and they will open up the store and leave after things get going.
-        Employees = new Employee[4]; // Create 4 Employees to supervise the 4 self checkouts. Assignment does not specify employee count, so this is an assumption that there should be 4.
+        Employees = new Employee[1]; // Only one employee is created, the exact number of employees is not specified in the assignment but I assume it is one based on it's singular noun mentioned at the last paragraph where customers leave.
         Customers = new Customer[NumCustomers]; // Customer count will be determined by the input argument as requested.
 
         // Creates the threads

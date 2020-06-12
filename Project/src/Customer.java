@@ -1,19 +1,26 @@
 
 public class Customer implements Runnable {
-    private String name;
+    private String Name;
+    private int Number; //will be useful when the customers needs to leave in order of their number.
     private Thread CustomerThread;
 
     //Constructor for Customer Based off BabyGeese and MotherGoose Examples.
     Customer(String Num){
         setName("Customer_" + Num);
-        this.CustomerThread = new Thread(this, name);
+        setNumber(Integer.parseInt(Num));
+        this.CustomerThread = new Thread(this, Name);
     }
 
     public void setName(String in){
-        this.name = in;
+        this.Name = in;
     }
+
+    public void setNumber(int in){
+        this.Number = in;
+    }
+
     public String getName(){
-        return this.name;
+        return this.Name;
     }
 
     //Called in Main to start the Thread.
@@ -46,7 +53,7 @@ public class Customer implements Runnable {
             // Busy Wait if there are 6 people shopping in the store exit once there is space.
         }
 
-        Store.CUSTOMER_QUEUE.remove(this); // Remove them from the Queue that they were waiting for outside.
+        Store.CUSTOMER_QUEUE.remove(); // Remove them from the Queue that they were waiting for outside.
         Store.CUSTOMERS_SHOPPING.getAndIncrement(); // Add 1 to the Counter of shoppers to prevent others from coming in if there's 6 inside.
         msg("I'm finally inside and can shop. I better stay away from others, they could be sick!");
 

@@ -1,3 +1,4 @@
+import java.util.Random;
 
 public class Employee implements Runnable {
     private String name;
@@ -22,9 +23,19 @@ public class Employee implements Runnable {
 
     @Override
     public void run() {
+        try {
+            this.EmployeeThread.sleep(Store.RandomTime(1000,1200));
+            // Random Sleep Time to simulate Arrival To Work.
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        msg("I've made it to the store, and I'm ready to work!");
+        Store.EMPLOYEE_IS_HERE.set(true);
 
     }
 
+    //Message method suggested and provided by the assignment.
     public void msg(String m) {
         System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName()+": "+m);
     }

@@ -21,6 +21,12 @@ public class Manager implements Runnable{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        msg("I've made it to work. Let me wait until my Employee is here so I can open the store.");
+        while(!Store.EMPLOYEE_IS_HERE.get()){
+            //Busy Wait, Can't open the store until the employee comes to work.
+        }
+
         msg("The store is now open! Come in everyone. Remember to stay 6 feet apart!");
         Store.STORE_IS_OPEN.set(true); // Sets the store to open.
 
@@ -35,6 +41,7 @@ public class Manager implements Runnable{
         return this.name;
     }
 
+    //Message method suggested and provided by the assignment.
     public void msg(String m) {
         System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName()+": "+m);
     }
