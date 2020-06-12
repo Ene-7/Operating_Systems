@@ -53,9 +53,9 @@ public class Customer implements Runnable {
         // Busy Wait code here... Make sure they get in a FCFS order. This section Should be done by the code below:
 
 
-        Customer ME = Store.CUSTOMER_QUEUE.poll(); // Identify the First Most Customer To Ensure First Come First Serve Order
+        Customer ME = Store.CUSTOMER_QUEUE.peek(); // Identify the First Most Customer To Ensure First Come First Serve Order
 
-        while(Store.CUSTOMERS_SHOPPING.get() == Store.Store_Capacity || !ME.Name.equals(this.Name)){
+        while(Store.CUSTOMERS_SHOPPING.get() == Store.Store_Capacity || !ME.equals(this)){
             // Busy Wait if there are 6 people shopping in the store exit once there is space.
         }
         Store.CUSTOMER_QUEUE.remove(ME); //Remove the one identified from the queue.
