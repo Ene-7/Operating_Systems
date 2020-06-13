@@ -30,7 +30,8 @@ public class Manager implements Runnable{
         msg("The store is now open! Come in everyone. Remember to stay 6 feet apart!");
         Store.STORE_IS_OPEN.set(true); // Sets the store to open.
 
-
+        //TODO MANAGER CAN ONLY LEAVE ONCE THERE ARE NO MORE CUSTOMERS WAITING OUTSIDE TO GET IN
+        // ONE THE CUSTOMER_QUEUE IS EMPTY MANAGER HEADS HOME.
     }
 
     public void setName(String in){
