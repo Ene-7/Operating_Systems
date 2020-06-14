@@ -15,6 +15,7 @@ public class Store {
     public static final int NumSelf_Checkout = 4; // Number of Self Checkout registers
     public static long time = System.currentTimeMillis(); // The start of the Main/Store Thread.
     public static ConcurrentLinkedQueue<Customer> CUSTOMER_QUEUE = new ConcurrentLinkedQueue<Customer>(); //Customers waiting to get in and shop. might need to revert this.
+    public static ConcurrentLinkedQueue<Customer> CUSTOMER_CHECKOUT_QUEUE = new ConcurrentLinkedQueue<Customer>(); // Checkout Register Queue.
     public static AtomicInteger CUSTOMERS_SHOPPING = new AtomicInteger(0); // Number of Current Shoppers inside the store. Atomic Integer to keep it thread safe.
     public static AtomicBoolean STORE_IS_OPEN =  new AtomicBoolean(false); // Store Starts off Closed. Must be opened up by the Manager once he sees enough people lining up.
     public static AtomicBoolean EMPLOYEE_IS_HERE =  new AtomicBoolean(false); // Is the Employee at work yet? (Used in Manager class to open up store).

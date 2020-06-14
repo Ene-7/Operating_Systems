@@ -73,7 +73,23 @@ public class Customer implements Runnable {
             e.printStackTrace();
         }
 
-        //TODO ADD CHECKOUT STUFF HERE: WILL HAVE TO CALL IN EMPLOYEE SOMEHOW MAYBE ANOTHER ATOMIC BOOLEAN?
+        this.CustomerThread.setPriority(7); // We increase the priority of the process to simulate the action of rushing to checkout
+        try {
+            this.CustomerThread.sleep(Store.RandomInt(2000,5000)); //Sleep for 2 to 5 Seconds to simulate rushing to the checkout
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.CustomerThread.setPriority(5); // Set Priority back to DEFAULT Value.
+
+        if(!this.isElder){ // If the current customer is not an Elderly Person, they should yield for the Elderly that may also be in line to a register.
+            this.CustomerThread.yield();
+            this.CustomerThread.yield();
+        } // This should allow the elderly to get to the checkout first.
+        //TODO ADD CHECKOUT STUFF HERE: WILL HAVE TO CALL IN EMPLOYEE SOMEHOW MAYBE ANOTHER ATOMIC BOOLEAN
+
+        while(){
+            // Busy Wait until called into a register by Employee.
+        }
 
         Store.CUSTOMERS_SHOPPING.getAndDecrement(); //Remove the shopper form shopping
     }

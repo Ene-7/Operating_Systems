@@ -33,6 +33,8 @@ public class Employee implements Runnable {
 
         //TODO EMPLOYEE IS THE LAST ONE TO LEAVE THE STORE AND EVERYONE ELSE WILL THEN WAIT FOR HIM
         // TO RESOLVE THE TRAFFIC JAM IN THE PARKING LOT. THEN ALL OF THE CUSTOMERS WILL LEAVE IN SEQUENTIAL ORDER TO 1 TO N.
+
+
     }
 
     //Message method suggested and provided by the assignment.
