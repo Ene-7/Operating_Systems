@@ -3,6 +3,7 @@ public class Customer implements Runnable {
     private String Name;
     private int Number; //will be useful when the customers needs to leave in order of their number.
     private boolean isElder = false; // Is this Customer old or not. This will help determine if they can get priority self checkout from other customers.
+    private boolean isCalled = false; // This will help for the checkout register for the
     private Thread CustomerThread;
 
     //Constructor for Customer Based off BabyGeese and MotherGoose Examples.
@@ -87,7 +88,9 @@ public class Customer implements Runnable {
         } // This should allow the elderly to get to the checkout first.
         //TODO ADD CHECKOUT STUFF HERE: WILL HAVE TO CALL IN EMPLOYEE SOMEHOW MAYBE ANOTHER ATOMIC BOOLEAN
 
-        while(){
+        Store.CUSTOMER_CHECKOUT_QUEUE.add(this); // Add this customer to the Checkout Queue
+        Customer CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek();
+        while(!this.isCalled && !CHECKOUT_ME.equals(this) ){
             // Busy Wait until called into a register by Employee.
         }
 
