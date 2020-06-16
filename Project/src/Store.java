@@ -14,7 +14,7 @@ public class Store {
     private static Manager[] Managers; // This will contain the number of managers. The project only mentions one so the program is built to only work with one manager.
     private static Employee[] Employees; // The former applies to the Employees as well. Only one is assumed to be working at the store.
     private static Customer[] Customers; // Customers will be specified by the command line argument and this array will be sized accordingly.
-    private static int NumCustomers; // Number of total customers that will be shopping, provided as an input argument
+    public static int NumCustomers; // Number of total customers that will be shopping, provided as an input argument
     public static final int Store_Capacity = 6; // How many people can shop at a time
     public static final int NumSelf_Checkout = 4; // Number of Self Checkout registers
     public static long time = System.currentTimeMillis(); // The start of the Heavyweight Main/Store Thread.
@@ -23,7 +23,7 @@ public class Store {
     public static AtomicInteger CUSTOMERS_SHOPPING = new AtomicInteger(0); // Number of Current Shoppers inside the store. Atomic Integer to keep it thread safe.
     public static AtomicBoolean STORE_IS_OPEN =  new AtomicBoolean(false); // Store Starts off Closed. Must be opened up by the Manager once he sees enough people lining up.
     public static AtomicBoolean EMPLOYEE_IS_HERE =  new AtomicBoolean(false); // Is the Employee at work yet? (Used in Manager class to open up store).
-    public static AtomicBoolean[] CHECKOUT_REGISTERS = new AtomicBoolean[NumSelf_Checkout]; // This will hold values if the register is available or not. It will be checked by the store Employee to direct Customers to an available spot.
+    public static Customer[] CHECKOUT_REGISTERS = new Customer[NumSelf_Checkout]; // This will hold values if the register is available or not. It will be checked by the store Employee to direct Customers to an available spot.
 
     public static void main(String[] args){
             try {
@@ -33,12 +33,12 @@ public class Store {
                 System.out.println("Invalid Input. Input Should Be An Integer Value. Please Reconfigure The Arguments And Try Again.");
             } // As requested, the number of Customers will be specified by an argument value.
 
-        Managers = new Manager[1]; // Only one manager is referenced in the assignment, and they will open up the store and leave after things get going.
+        Managers = new Manager[1]; // Only one manager is referenced in the assignment, and they will open up the store and leave after there's no more customers in queue to enter.
         Employees = new Employee[1]; // Only one employee is created, the exact number of employees is not specified in the assignment but I assume it is one based on it's singular noun mentioned at the last paragraph where customers leave.
         Customers = new Customer[NumCustomers]; // Customer count will be determined by the input argument as requested.
 
         // Creates the threads
-        // Although Manager and Employee(s) do not need a for loop for initialization. I'm keeping them this way just in case the store scales. Program would have to be altered if this happens though.
+        // Although Manager and Employee(s) do not need a for loop for initialization. I'm keeping them this way just in case their count scales. Program would have to be altered if this happens though.
         // the local for loop variable i  is incremented by 1 when constructing each class because the assignment requests that all threads must be named from 1 to N.
         for (int i = 0; i < Managers.length; i++) {
             Managers[i] = new Manager(Integer.toString(i+1));

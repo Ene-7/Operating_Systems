@@ -28,6 +28,14 @@ public class Customer implements Runnable {
         return this.Name;
     }
 
+    public boolean isCalledToRegister(){
+        return this.isCalled;
+    }
+
+    public void callToRegister(){
+        this.isCalled = true;
+    }
+
     //Called in Main to start the Thread.
     public void start() {
         CustomerThread.start();
@@ -62,14 +70,15 @@ public class Customer implements Runnable {
         while (Store.CUSTOMERS_SHOPPING.get() == Store.Store_Capacity) {
             // Busy Wait if there are 6 people shopping in the store exit once there is space.
         }
-        Store.CUSTOMER_QUEUE.remove(ME); //Remove the one identified from the queue.
         Store.CUSTOMERS_SHOPPING.getAndIncrement(); // Add 1 to the Counter of shoppers to prevent others from coming in if there's 6 inside.
+        Store.CUSTOMER_QUEUE.remove(ME); //Remove the one identified from the queue.
+
 
         msg("I'm finally inside and can shop. I better stay away from others, they could be sick!");
 
         //Simulate Shop Time
         try {
-            this.CustomerThread.sleep(Store.RandomInt(30000,60000)); // 30 to 60 seconds
+            this.CustomerThread.sleep(Store.RandomInt(5000,10000)); // 5 to 10 seconds
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -87,19 +96,31 @@ public class Customer implements Runnable {
             this.CustomerThread.yield();
             this.CustomerThread.yield();
         } // This should allow the elderly to get to the checkout first.
-        //TODO ADD CHECKOUT STUFF HERE: WILL HAVE TO CALL IN EMPLOYEE SOMEHOW MAYBE ANOTHER ATOMIC BOOLEAN
+        //TODO ADD CHECKOUT STUFF HERE: WILL HAVE TO CALL IN EMPLOYEE SOMEHOW MAYBE ANOTHER ATOMIC BOOLEAN?
 
 
         Store.CUSTOMER_CHECKOUT_QUEUE.add(this); // Add this customer to the Checkout Queue
         Customer CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek(); // Keep looking out on who's instructed to go next by the Store Employee.
 
-        while(!this.isCalled && !CHECKOUT_ME.equals(this) ){
+        while(!this.isCalled){
             CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek(); //If Customer has not been called on yet, keep looking out and wait for the Employee to direct them to a register.
             // Busy Wait until called into a register by Employee.
         }
-        Store.CUSTOMER_CHECKOUT_QUEUE.remove(CHECKOUT_ME);
+        Store.CUSTOMER_CHECKOUT_QUEUE.remove(CHECKOUT_ME); // Walk out of the checkout queue and into the self paying area/register.
+        try {
+            this.CustomerThread.sleep(Store.RandomInt(2000,5000)); // Sleep for 2 to 5 seconds to simulate paying time.
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for(int i = 0; i < Store.CHECKOUT_REGISTERS.length; i++){
+            if(Store.CHECKOUT_REGISTERS[i] == this){
+                Store.CHECKOUT_REGISTERS[i] = null; // Once the customer is done they open up the spot at the checkout for someone else to be called in to use it.
+            }
+        }
+        Store.CUSTOMERS_SHOPPING.getAndDecrement(); //Remove the shopper form the store interior
 
-        Store.CUSTOMERS_SHOPPING.getAndDecrement(); //Remove the shopper form shopping
+        //Traffic Jam Event, BW until Employee handles it
+        msg("Traffic! I hate it!");
     }
 
 
