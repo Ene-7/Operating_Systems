@@ -15,7 +15,7 @@ public class Manager implements Runnable{
     public void run() {
         //"Randomly determine when the Manager opens the store" - As requested by the project description:
         try {
-            this.ManagerThread.sleep(Store.RandomInt(200, 800));
+            this.ManagerThread.sleep(Store.RandomInt(2000, 4000));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

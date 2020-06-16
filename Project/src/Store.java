@@ -11,9 +11,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Store {
-    private static Manager[] Managers; // This will contain the number of managers. The project only mentions one so the program is built to only work with one manager.
-    private static Employee[] Employees; // The former applies to the Employees as well. Only one is assumed to be working at the store.
-    private static Customer[] Customers; // Customers will be specified by the command line argument and this array will be sized accordingly.
+    public static Manager[] Managers; // This will contain the number of managers. The project only mentions one so the program is built to only work with one manager.
+    public static Employee[] Employees; // The former applies to the Employees as well. Only one is assumed to be working at the store.
+    public static Customer[] Customers; // Customers will be specified by the command line argument and this array will be sized accordingly.
     public static int NumCustomers; // Number of total customers that will be shopping, provided as an input argument
     public static final int Store_Capacity = 6; // How many people can shop at a time
     public static final int NumSelf_Checkout = 4; // Number of Self Checkout registers
@@ -23,7 +23,7 @@ public class Store {
     public static AtomicInteger CUSTOMERS_SHOPPING = new AtomicInteger(0); // Number of Current Shoppers inside the store. Atomic Integer to keep it thread safe.
     public static AtomicBoolean STORE_IS_OPEN =  new AtomicBoolean(false); // Store Starts off Closed. Must be opened up by the Manager once he sees enough people lining up.
     public static AtomicBoolean EMPLOYEE_IS_HERE =  new AtomicBoolean(false); // Is the Employee at work yet? (Used in Manager class to open up store).
-    public static Customer[] CHECKOUT_REGISTERS = new Customer[NumSelf_Checkout]; // This will hold values if the register is available or not. It will be checked by the store Employee to direct Customers to an available spot.
+    public static Customer[] CHECKOUT_REGISTERS = new Customer[NumSelf_Checkout]; // This will hold values if the checkout register is available or not. It will be checked by the store Employee to direct Customers to an available spot.
 
     public static void main(String[] args){
             try {
@@ -65,7 +65,7 @@ public class Store {
     }
 
     // Random method that will decide the sleep times for Customers, Managers and Employees.
-    // placed in main/store if it's needed elsewhere globally.
+    // placed in main/store because it's needed elsewhere globally.
     public static int RandomInt(int min, int max) {
         Random rand = new Random();
         return rand.nextInt((max - min) + 1) + min;

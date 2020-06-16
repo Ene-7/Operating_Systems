@@ -11,6 +11,10 @@ public class Employee implements Runnable {
         this.name = in;
     }
 
+    public Thread getThread(){
+        return this.EmployeeThread;
+    }
+
     public String getName(){
         return this.name;
     }
@@ -22,7 +26,7 @@ public class Employee implements Runnable {
     @Override
     public void run() {
         try {
-            this.EmployeeThread.sleep(Store.RandomInt(1000,1200));
+            this.EmployeeThread.sleep(Store.RandomInt(3000,6000)); //3 seconds to 6 second sleep
             // Random Sleep Time to simulate Arrival To Work.
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -46,18 +50,19 @@ public class Employee implements Runnable {
             }//if
         }//while
 
-        int countParking = Store.NumCustomers;
-        while(countParking > 0){
+        while(Store.CUSTOMERS_SHOPPING.get() > 0){} //BW Until all are done shopping and have left the store.
 
-            countParking--;
+        for(Customer K: Store.Customers){ // Join all Customer threads in their ID order.
+            K.getThread().interrupt();
+            try {
+                if(K.getThread().isAlive())
+                    K.getThread().join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
-
         msg("I'm done for the day!");
-
-        //TODO EMPLOYEE IS THE LAST ONE TO LEAVE THE STORE AND EVERYONE ELSE WILL THEN WAIT FOR HIM
-        // TO RESOLVE THE TRAFFIC JAM IN THE PARKING LOT. THEN ALL OF THE CUSTOMERS WILL LEAVE IN SEQUENTIAL ORDER TO 1 TO N.
-
 
     }
 

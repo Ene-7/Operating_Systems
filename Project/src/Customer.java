@@ -1,14 +1,12 @@
 
 public class Customer implements Runnable {
     private String Name; // The name of the Customer.
-    private int Number; //will be useful when the customers needs to leave in order of their number.
     private boolean isElder = false; // Is this Customer old or not. This will help determine if they can get priority self checkout from other customers.
     private boolean isCalled = false; // This will help for the checkout register and also for when customers need to leave
     private Thread CustomerThread; // The thread.
 
     Customer(String Num, int Elder_Chance){
         setName("Customer_" + Num);
-        setNumber(Integer.parseInt(Num));
         this.CustomerThread = new Thread(this, Name);
         if(Elder_Chance == 4) this.isElder = true;
         // The assignment says that about 25% of the customers are elderly,
@@ -19,12 +17,8 @@ public class Customer implements Runnable {
         this.Name = in;
     }
 
-    public void setNumber(int in){
-        this.Number = in;
-    }
-
-    public int getNumber(){
-        return this.Number;
+    public Thread getThread(){
+        return this.CustomerThread;
     }
 
     public String getName(){
@@ -47,8 +41,8 @@ public class Customer implements Runnable {
     @Override
     public void run() {
         try {
-            this.CustomerThread.sleep(Store.RandomInt(1000,4000));
-            // This will simulate an arrival time from 1 to 4 seconds.
+            this.CustomerThread.sleep(Store.RandomInt(1000,10000));
+            // This will simulate an arrival time from 1 to 10 seconds.
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -86,6 +80,9 @@ public class Customer implements Runnable {
             e.printStackTrace();
         }
 
+
+        // SELF CHECKOUT SECTION:
+
         msg("I got what I needed. Time to head to the checkout!");
         this.CustomerThread.setPriority(7); // We increase the priority of the process to simulate the action of rushing to checkout
         try {
@@ -94,35 +91,33 @@ public class Customer implements Runnable {
             e.printStackTrace();
         }
         this.CustomerThread.setPriority(5); // Set Priority back to DEFAULT Value.
-
         if(!this.isElder){ // If the current customer is not an Elderly Person, they should yield for the Elderly that may also be in line to a register.
             this.CustomerThread.yield();
             this.CustomerThread.yield();
         } // This should allow the elderly to get to the checkout first.
-
-        //TODO ADD CHECKOUT STUFF HERE: WILL HAVE TO CALL IN EMPLOYEE SOMEHOW MAYBE ANOTHER ATOMIC BOOLEAN?
-
-
         Store.CUSTOMER_CHECKOUT_QUEUE.add(this); // Add this customer to the Checkout Queue
-        Customer CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek(); // Keep looking out on who's instructed to go next by the Store Employee.
 
+        // WAITING TO BE DIRECTED TO A REGISTER BY THE EMPLOYEE:
+
+        Customer CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek(); // Keep looking out on who's instructed to go next by the Store Employee.
         while(!this.isCalled){
             CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek(); //If Customer has not been called on yet, keep looking out and wait for the Employee to direct them to a register.
             // Busy Wait until called into a register by Employee.
         }
         Store.CUSTOMER_CHECKOUT_QUEUE.remove(CHECKOUT_ME); // Walk out of the checkout queue and into the self paying area/register.
-       // this.isCalled = false; // rest this back to false so we can use it again later to help Customers BW until the employee directs them to leave the parking lot in order.
+
         try {
             this.CustomerThread.sleep(Store.RandomInt(2000,5000)); // Sleep for 2 to 5 seconds to simulate paying time.
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-        for(int i = 0; i < Store.CHECKOUT_REGISTERS.length; i++){
+        } //It is necessary to do this because if they pay instantly then every customer only uses register 1.
+
+        for(int i = 0; i < Store.CHECKOUT_REGISTERS.length; i++){  // Leave the self checkout Register and open up the spot for the next person.
             if(Store.CHECKOUT_REGISTERS[i] == this){
                 Store.CHECKOUT_REGISTERS[i] = null; // Once the customer is done they open up the spot at the checkout for someone else to be called in to use it.
             }
         }
-        Store.CUSTOMERS_SHOPPING.getAndDecrement(); //Remove the shopper form the store interior
+        Store.CUSTOMERS_SHOPPING.getAndDecrement(); //Remove the shopper form the store interior (now another shopper can come in)
 
         //Traffic Jam Event, Sleep until Employee handles it
         msg("Got what I needed. Uh oh there's a traffic jam outside I can't leave!!!");
@@ -130,8 +125,11 @@ public class Customer implements Runnable {
         try {
             this.CustomerThread.sleep(Store.RandomInt(50000,100000)); // will sleep for 50 to 100 seconds
         } catch (InterruptedException e) {
-            msg("We're saved! We can finally go home!");
+            msg("INTERRUPT BY EMPLOYEE: We're saved! We can finally go home!");
         }
+
+        msg("=== HAS LEFT THE PARKING LOT ===");
+
     }
 
 
