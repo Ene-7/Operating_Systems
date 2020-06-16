@@ -24,6 +24,10 @@ public class Customer implements Runnable {
         this.Number = in;
     }
 
+    public int getNumber(){
+        return this.Number;
+    }
+
     public String getName(){
         return this.Name;
     }
