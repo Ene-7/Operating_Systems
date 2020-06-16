@@ -1,3 +1,10 @@
+/*
+*  @author Eneid Papa
+*  Operating Systems CS 340
+*  Summer 2020
+*  Project 1
+*/
+
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -10,12 +17,13 @@ public class Store {
     private static int NumCustomers; // Number of total customers that will be shopping, provided as an input argument
     public static final int Store_Capacity = 6; // How many people can shop at a time
     public static final int NumSelf_Checkout = 4; // Number of Self Checkout registers
-    public static long time = System.currentTimeMillis(); // The start of the Main/Store Thread.
+    public static long time = System.currentTimeMillis(); // The start of the Heavyweight Main/Store Thread.
     public static ConcurrentLinkedQueue<Customer> CUSTOMER_QUEUE = new ConcurrentLinkedQueue<Customer>(); //Customers waiting to get in and shop.
     public static ConcurrentLinkedQueue<Customer> CUSTOMER_CHECKOUT_QUEUE = new ConcurrentLinkedQueue<Customer>(); // Checkout Queue when customers have their stuff ready to purchase.
     public static AtomicInteger CUSTOMERS_SHOPPING = new AtomicInteger(0); // Number of Current Shoppers inside the store. Atomic Integer to keep it thread safe.
     public static AtomicBoolean STORE_IS_OPEN =  new AtomicBoolean(false); // Store Starts off Closed. Must be opened up by the Manager once he sees enough people lining up.
     public static AtomicBoolean EMPLOYEE_IS_HERE =  new AtomicBoolean(false); // Is the Employee at work yet? (Used in Manager class to open up store).
+    public static AtomicBoolean[] CHECKOUT_REGISTERS = new AtomicBoolean[NumSelf_Checkout]; // This will hold values if the register is available or not. It will be checked by the store Employee to direct Customers to an available spot.
 
     public static void main(String[] args){
             try {
@@ -30,6 +38,8 @@ public class Store {
         Customers = new Customer[NumCustomers]; // Customer count will be determined by the input argument as requested.
 
         // Creates the threads
+        // Although Manager and Employee(s) do not need a for loop for initialization. I'm keeping them this way just in case the store scales. Program would have to be altered if this happens though.
+        // the local for loop variable i  is incremented by 1 when constructing each class because the assignment requests that all threads must be named from 1 to N.
         for (int i = 0; i < Managers.length; i++) {
             Managers[i] = new Manager(Integer.toString(i+1));
         }
@@ -37,7 +47,7 @@ public class Store {
             Employees[i] = new Employee(Integer.toString(i+1));
         }
         for(int i = 0; i < Customers.length; i++){
-            Customers[i] = new Customer(Integer.toString(i+1), RandomInt(1,4));
+            Customers[i] = new Customer(Integer.toString(i+1), RandomInt(1,4)); // Will Create NumCustomers, along with a 25% probability of them being Elderly.
         }
 
         // Starts the threads
