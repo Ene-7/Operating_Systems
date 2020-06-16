@@ -1,5 +1,3 @@
-
-
 public class Manager implements Runnable{
     private String name;
     private Thread ManagerThread;

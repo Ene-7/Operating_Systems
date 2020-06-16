@@ -1,12 +1,11 @@
 
 public class Customer implements Runnable {
-    private String Name;
+    private String Name; // The name of the Customer.
     private int Number; //will be useful when the customers needs to leave in order of their number.
     private boolean isElder = false; // Is this Customer old or not. This will help determine if they can get priority self checkout from other customers.
-    private boolean isCalled = false; // This will help for the checkout register for the
-    private Thread CustomerThread;
+    private boolean isCalled = false; // This will help for the checkout register and also for when customers need to leave
+    private Thread CustomerThread; // The thread.
 
-    //Constructor for Customer Based off BabyGeese and MotherGoose Examples.
     Customer(String Num, int Elder_Chance){
         setName("Customer_" + Num);
         setNumber(Integer.parseInt(Num));
@@ -48,8 +47,8 @@ public class Customer implements Runnable {
     @Override
     public void run() {
         try {
-            this.CustomerThread.sleep(Store.RandomInt(10,1000));
-            // This will simulate an arrival time from 1 to 1000 milliseconds.
+            this.CustomerThread.sleep(Store.RandomInt(1000,4000));
+            // This will simulate an arrival time from 1 to 4 seconds.
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -100,6 +99,7 @@ public class Customer implements Runnable {
             this.CustomerThread.yield();
             this.CustomerThread.yield();
         } // This should allow the elderly to get to the checkout first.
+
         //TODO ADD CHECKOUT STUFF HERE: WILL HAVE TO CALL IN EMPLOYEE SOMEHOW MAYBE ANOTHER ATOMIC BOOLEAN?
 
 
@@ -111,6 +111,7 @@ public class Customer implements Runnable {
             // Busy Wait until called into a register by Employee.
         }
         Store.CUSTOMER_CHECKOUT_QUEUE.remove(CHECKOUT_ME); // Walk out of the checkout queue and into the self paying area/register.
+       // this.isCalled = false; // rest this back to false so we can use it again later to help Customers BW until the employee directs them to leave the parking lot in order.
         try {
             this.CustomerThread.sleep(Store.RandomInt(2000,5000)); // Sleep for 2 to 5 seconds to simulate paying time.
         } catch (InterruptedException e) {
@@ -123,8 +124,14 @@ public class Customer implements Runnable {
         }
         Store.CUSTOMERS_SHOPPING.getAndDecrement(); //Remove the shopper form the store interior
 
-        //Traffic Jam Event, BW until Employee handles it
-        msg("Traffic! I hate it!");
+        //Traffic Jam Event, Sleep until Employee handles it
+        msg("Got what I needed. Uh oh there's a traffic jam outside I can't leave!!!");
+        //We now simulate the long traffic jam by doing a long sleep that will be interrupted by the Employee Thread.
+        try {
+            this.CustomerThread.sleep(Store.RandomInt(50000,100000)); // will sleep for 50 to 100 seconds
+        } catch (InterruptedException e) {
+            msg("We're saved! We can finally go home!");
+        }
     }
 
 
