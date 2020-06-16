@@ -74,6 +74,7 @@ public class Customer implements Runnable {
             e.printStackTrace();
         }
 
+        msg("I got what I needed. Time to head to the checkout!");
         this.CustomerThread.setPriority(7); // We increase the priority of the process to simulate the action of rushing to checkout
         try {
             this.CustomerThread.sleep(Store.RandomInt(2000,5000)); //Sleep for 2 to 5 Seconds to simulate rushing to the checkout
@@ -88,11 +89,15 @@ public class Customer implements Runnable {
         } // This should allow the elderly to get to the checkout first.
         //TODO ADD CHECKOUT STUFF HERE: WILL HAVE TO CALL IN EMPLOYEE SOMEHOW MAYBE ANOTHER ATOMIC BOOLEAN
 
+
         Store.CUSTOMER_CHECKOUT_QUEUE.add(this); // Add this customer to the Checkout Queue
-        Customer CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek();
+        Customer CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek(); // Keep looking out on who's instructed to go next by the Store Employee.
+
         while(!this.isCalled && !CHECKOUT_ME.equals(this) ){
+            CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek(); //If Customer has not been called on yet, keep looking out and wait for the Employee to direct them to a register.
             // Busy Wait until called into a register by Employee.
         }
+        Store.CUSTOMER_CHECKOUT_QUEUE.remove(CHECKOUT_ME);
 
         Store.CUSTOMERS_SHOPPING.getAndDecrement(); //Remove the shopper form shopping
     }

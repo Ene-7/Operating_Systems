@@ -15,7 +15,7 @@ public class Manager implements Runnable{
 
     @Override
     public void run() {
-        //"Randomly determine when the Manager opens the store"
+        //"Randomly determine when the Manager opens the store" - As requested by the project description:
         try {
             this.ManagerThread.sleep(Store.RandomInt(200, 800));
         } catch (InterruptedException e) {
@@ -30,8 +30,12 @@ public class Manager implements Runnable{
         msg("The store is now open! Come in everyone. Remember to stay 6 feet apart!");
         Store.STORE_IS_OPEN.set(true); // Sets the store to open.
 
-        //TODO MANAGER CAN ONLY LEAVE ONCE THERE ARE NO MORE CUSTOMERS WAITING OUTSIDE TO GET IN
-        // ONE THE CUSTOMER_QUEUE IS EMPTY MANAGER HEADS HOME.
+        // MANAGER CAN ONLY LEAVE ONCE THERE ARE NO MORE CUSTOMERS WAITING OUTSIDE TO GET IN
+        // ONCE THE CUSTOMER_QUEUE IS EMPTY MANAGER HEADS HOME.
+        while(!Store.CUSTOMER_QUEUE.isEmpty()){
+            // BW (Keep assisting the Customers entering the store until none are left)
+        }
+        msg("Looks like that's all of them. I'm heading home!");
     }
 
     public void setName(String in){

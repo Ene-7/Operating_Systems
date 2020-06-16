@@ -31,6 +31,10 @@ public class Employee implements Runnable {
         msg("I've made it to the store, and I'm ready to work!");
         Store.EMPLOYEE_IS_HERE.set(true);
 
+        while(){
+
+        }
+
         //TODO EMPLOYEE IS THE LAST ONE TO LEAVE THE STORE AND EVERYONE ELSE WILL THEN WAIT FOR HIM
         // TO RESOLVE THE TRAFFIC JAM IN THE PARKING LOT. THEN ALL OF THE CUSTOMERS WILL LEAVE IN SEQUENTIAL ORDER TO 1 TO N.
 
