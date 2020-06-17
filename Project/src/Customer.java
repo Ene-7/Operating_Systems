@@ -123,13 +123,11 @@ public class Customer implements Runnable {
         msg("Got what I needed. Uh oh there's a traffic jam outside I can't leave!!!");
         //We now simulate the long traffic jam by doing a long sleep that will be interrupted by the Employee Thread.
         try {
-            this.CustomerThread.sleep(Store.RandomInt(50000,100000)); // will sleep for 50 to 100 seconds
+            this.CustomerThread.sleep(Store.RandomInt(500000,1000000)); // will sleep for 500 to 1000 seconds
         } catch (InterruptedException e) {
             msg("INTERRUPT BY EMPLOYEE: We're saved! We can finally go home!");
         }
-
         msg("=== HAS LEFT THE PARKING LOT ===");
-
     }
 
 
