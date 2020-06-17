@@ -133,7 +133,10 @@ public class Customer implements Runnable {
 
     //Message method suggested and provided by the assignment.
     public void msg(String m) {
-        System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName()+": "+m);
+        if(this.isElder)
+            System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName() +": "+m +" [ELDER]");
+        else
+            System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName()+": "+m);
     }
 
 }
