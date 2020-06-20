@@ -39,13 +39,16 @@ public class Customer implements Runnable {
         msg("I've arrived at the stores' parking lot, and I'm now in the queue waiting to go in.");
 
 
-        // busy wait if the store is still not open, need to wait for Manager and employees to show up first.
+       /* // busy wait if the store is still not open, need to wait for Manager and employees to show up first.
         while(!Store.STORE_IS_OPEN.get()){
             // Busy wait until store opens. Manager must open up the store, once there are enough people waiting.
+        }*/
+        try {
+            Store.STORE_IS_OPEN_SEMAPHORE.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-
-
+        Store.STORE_IS_OPEN_SEMAPHORE.release();
 
         // Busy Wait until store has space available to allow 6 customers inside to shop.
         // Make sure they get in a FCFS order.
@@ -103,13 +106,6 @@ public class Customer implements Runnable {
             e.printStackTrace();
         } //It is necessary to do this because if they pay instantly then every customer only uses register 1.
 
-        for(int i = 0; i < Store.CHECKOUT_REGISTERS.length; i++){  // Leave the self checkout Register and open up the spot for the next person.
-            if(Store.CHECKOUT_REGISTERS[i] == this){
-                Store.CHECKOUT_REGISTERS[i] = null; // Once the customer is done they open up the spot at the checkout for someone else to be called in to use it.
-            }
-        }
-        Store.CUSTOMERS_SHOPPING.getAndDecrement(); //Remove the shopper form the store interior (now another shopper can come in)
-
         //Traffic Jam Event, Sleep until Employee handles it
         msg("Got what I needed. Uh oh there's a traffic jam outside I can't leave!!!");
         //We now simulate the long traffic jam by doing a long sleep that will be interrupted by the Employee Thread.
@@ -125,7 +121,7 @@ public class Customer implements Runnable {
     //Message method suggested and provided by the assignment.
     public void msg(String m) {
         if(this.isElder)
-            System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName() +": "+m +" [ELDER]");
+            System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName() +": "+m +" [THIS CUSTOMER IS AN ELDER]");
         else
             System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName()+": "+m);
     }

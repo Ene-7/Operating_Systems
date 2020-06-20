@@ -31,7 +31,7 @@ public class Employee implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        Store.EMPLOYEE_IS_HERE.getAndSet(true);
         msg("I've made it to the store, and I'm ready to work!");
 
 

@@ -25,8 +25,8 @@ public class Store {
     public static AtomicBoolean STORE_IS_OPEN =  new AtomicBoolean(false); // Store Starts off Closed. Must be opened up by the Manager once he sees enough people lining up.
     public static AtomicBoolean EMPLOYEE_IS_HERE =  new AtomicBoolean(false); // Is the Employee at work yet? (Used in Manager class to open up store).
     public static Customer[] CHECKOUT_REGISTERS = new Customer[NumSelf_Checkout]; // This will hold values if the checkout register is available or not. It will be checked by the store Employee to direct Customers to an available spot.
-    public final Semaphore STORE_IS_OPEN_SEMAPHORE = new Semaphore(1, true);
-    public final Semaphore STORE_CAPACITY_ENTRY = new Semaphore(6, true);
+    public static final Semaphore STORE_IS_OPEN_SEMAPHORE = new Semaphore(1, true);
+    public static final Semaphore STORE_CAPACITY_ENTRY = new Semaphore(6, true);
 
 
 
@@ -41,7 +41,11 @@ public class Store {
         Managers = new Manager[1]; // Only one manager is referenced in the assignment, and they will open up the store and leave after there's no more customers in queue to enter.
         Employees = new Employee[1]; // Only one employee is created, the exact number of employees is not specified in the assignment but I assume it is one based on it's singular noun mentioned at the last paragraph where customers leave.
         Customers = new Customer[NumCustomers]; // Customer count will be determined by the input argument as requested.
-
+        try {
+            STORE_IS_OPEN_SEMAPHORE.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // Creates the threads
         // Although Manager and Employee(s) do not need a for loop for initialization. I'm keeping them this way just in case their count scales. Program would have to be altered if this happens though.
         // the local for loop variable i  is incremented by 1 when constructing each class because the assignment requests that all threads must be named from 1 to N.
