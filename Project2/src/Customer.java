@@ -39,10 +39,6 @@ public class Customer implements Runnable {
         msg("I've arrived at the stores' parking lot, and I'm now in the queue waiting to go in.");
 
 
-       /* // busy wait if the store is still not open, need to wait for Manager and employees to show up first.
-        while(!Store.STORE_IS_OPEN.get()){
-            // Busy wait until store opens. Manager must open up the store, once there are enough people waiting.
-        }*/
         try {
             Store.STORE_IS_OPEN_SEMAPHORE.acquire();
         } catch (InterruptedException e) {
@@ -50,19 +46,6 @@ public class Customer implements Runnable {
         }
         Store.STORE_IS_OPEN_SEMAPHORE.release();
 
-        // Busy Wait until store has space available to allow 6 customers inside to shop.
-        // Make sure they get in a FCFS order.
-
-        Customer ME = Store.CUSTOMER_QUEUE.peek(); // Identify the First Most Customer To Ensure First Come First Serve Order
-        while(!ME.equals(this)){
-            ME = Store.CUSTOMER_QUEUE.peek(); // Keep checking who's supposed to go, wait if it's not your turn
-        }
-
-        while (Store.CUSTOMERS_SHOPPING.get() == Store.Store_Capacity) {
-            // Busy Wait if there are 6 people shopping in the store exit once there is space.
-        }
-        Store.CUSTOMERS_SHOPPING.getAndIncrement(); // Add 1 to the Counter of shoppers to prevent others from coming in if there's 6 inside.
-        Store.CUSTOMER_QUEUE.remove(ME); //Remove the one identified from the queue.
 
 
         msg("I'm finally inside and can shop. I better stay away from others, they could be sick!");
@@ -91,14 +74,11 @@ public class Customer implements Runnable {
         } // This should allow the elderly to get to the checkout first.
         Store.CUSTOMER_CHECKOUT_QUEUE.add(this); // Add this customer to the Checkout Queue
 
+
+
+
         // WAITING TO BE DIRECTED TO A REGISTER BY THE EMPLOYEE:
 
-        Customer CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek(); // Keep looking out on who's instructed to go next by the Store Employee.
-        while(!this.isCalled){
-            CHECKOUT_ME = Store.CUSTOMER_CHECKOUT_QUEUE.peek(); //If Customer has not been called on yet, keep looking out and wait for the Employee to direct them to a register.
-            // Busy Wait until called into a register by Employee.
-        }
-        Store.CUSTOMER_CHECKOUT_QUEUE.remove(CHECKOUT_ME); // Walk out of the checkout queue and into the self paying area/register.
 
         try {
             this.CustomerThread.sleep(Store.RandomInt(2000,5000)); // Sleep for 2 to 5 seconds to simulate paying time.
