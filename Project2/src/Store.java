@@ -13,18 +13,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Store {
     public static Manager[] Managers; // This will contain the number of managers. The project only mentions one so the program is built to only work with one manager.
-    public static Employee[] Employees; // The former applies to the Employees as well. Only one is assumed to be working at the store.
+    public static Employee[] Employees; // The number of Employees is now equivalent to the number of Registers. //TODO the program needs to be modified from the previous to handle multiple employees this time around.
     public static Customer[] Customers; // Customers will be specified by the command line argument and this array will be sized accordingly.
     public static int NumCustomers; // Number of total customers that will be shopping, provided as an input argument
     public static final int Store_Capacity = 6; // How many people can shop at a time
     public static final int NumSelf_Checkout = 4; // Number of Self Checkout registers
     public static long time = System.currentTimeMillis(); // The start of the Heavyweight Main/Store Thread.
-    public static ConcurrentLinkedQueue<Customer> CUSTOMER_QUEUE = new ConcurrentLinkedQueue<Customer>(); //Customers waiting to get in and shop.
+    public static ConcurrentLinkedQueue<Customer> CUSTOMER_QUEUE = new ConcurrentLinkedQueue<Customer>(); //Customers waiting to get in and shop. Not sure If this will still be needed semaphore will handle everything to be queued
     public static ConcurrentLinkedQueue<Customer> CUSTOMER_CHECKOUT_QUEUE = new ConcurrentLinkedQueue<Customer>(); // Checkout Queue when customers have their stuff ready to purchase.
-    public static AtomicInteger CUSTOMERS_SHOPPING = new AtomicInteger(0); // Number of Current Shoppers inside the store. Atomic Integer to keep it thread safe.
-    public static AtomicBoolean STORE_IS_OPEN =  new AtomicBoolean(false); // Store Starts off Closed. Must be opened up by the Manager once he sees enough people lining up.
+    //public static AtomicInteger CUSTOMERS_SHOPPING = new AtomicInteger(0); // Number of Current Shoppers inside the store. Atomic Integer to keep it thread safe.
+    //public static AtomicBoolean STORE_IS_OPEN =  new AtomicBoolean(false); // Store Starts off Closed. Must be opened up by the Manager once he sees enough people lining up.
     public static AtomicBoolean EMPLOYEE_IS_HERE =  new AtomicBoolean(false); // Is the Employee at work yet? (Used in Manager class to open up store).
-    public static Customer[] CHECKOUT_REGISTERS = new Customer[NumSelf_Checkout]; // This will hold values if the checkout register is available or not. It will be checked by the store Employee to direct Customers to an available spot.
+    //public static Customer[] CHECKOUT_REGISTERS = new Customer[NumSelf_Checkout]; // This will hold values if the checkout register is available or not. It will be checked by the store Employee to direct Customers to an available spot.
     public static final Semaphore STORE_IS_OPEN_SEMAPHORE = new Semaphore(1, true);
     public static final Semaphore STORE_CAPACITY_ENTRY = new Semaphore(6, true);
 
