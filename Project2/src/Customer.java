@@ -89,12 +89,11 @@ public class Customer implements Runnable {
 
         //Traffic Jam Event, Sleep until Employee handles it
         msg("Got what I needed. Uh oh there's a traffic jam outside I can't leave!!!");
-        //We now simulate the long traffic jam by doing a long sleep that will be interrupted by the Employee Thread.
-        try {
-            this.CustomerThread.sleep(Store.RandomInt(500000,1000000)); // will sleep for 500 to 1000 seconds
-        } catch (InterruptedException e) {
-            msg("INTERRUPT BY EMPLOYEE: We're saved! We can finally go home!");
-        }
+
+
+        // Wait for employee to permit exit.
+
+
         msg("=== HAS LEFT THE PARKING LOT ===");
     }
 

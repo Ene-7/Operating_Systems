@@ -20,12 +20,19 @@ public class Manager implements Runnable{
             e.printStackTrace();
         }
 
-        msg("I've made it to work. Let me wait until my Employee is here so I can open the store.");
+        msg("I've made it to work. Let me wait until my Employees are here here so I can open the store.");
 
+        for(int i = 0; i < Store.NumSelf_Checkout; i++){ // Will do P(WAIT_FOR_EMPLOYEES) NumSelf_Checkout times because: NumSelf_Checkout = Employee count
+            try {
+                Store.WAIT_FOR_EMPLOYEES.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } // This will release once all employees show up to work and do V(WAIT_FOR_EMPLOYEES);
 
         msg("The store is now open! Come in everyone. Remember to stay 6 feet apart!");
 
-        Store.STORE_IS_OPEN_SEMAPHORE.release(); //open the store.
+        Store.STORE_IS_OPEN_SEMAPHORE.release(); //opens the store for the customers to start coming in.
 
         // MANAGER CAN ONLY LEAVE ONCE THERE ARE NO MORE CUSTOMERS WAITING OUTSIDE TO GET IN
 
