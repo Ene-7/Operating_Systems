@@ -35,19 +35,20 @@ public class Customer implements Runnable {
         catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Store.CUSTOMER_QUEUE.add(this); // Customer Object added to the Queue Located in Main.
         msg("I've arrived at the stores' parking lot, and I'm now in the queue waiting to go in.");
 
-
         try {
-            Store.STORE_IS_OPEN_SEMAPHORE.acquire();
+            Store.STORE_IS_OPEN_SEMAPHORE.acquire(); // Wait until Manager notifies the store is open.
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Store.STORE_IS_OPEN_SEMAPHORE.release();
+        Store.STORE_IS_OPEN_SEMAPHORE.release(); // release semaphore for the next customer to know the store is open. This will help keep them in order of arrival.
 
-
-
+        try {
+            Store.STORE_CAPACITY_ENTRY.acquire(); // Allow only enough customers as the Store Capacity.
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         msg("I'm finally inside and can shop. I better stay away from others, they could be sick!");
 
         //Simulate Shop Time
@@ -72,7 +73,7 @@ public class Customer implements Runnable {
             this.CustomerThread.yield();
             this.CustomerThread.yield();
         } // This should allow the elderly to get to the checkout first.
-        Store.CUSTOMER_CHECKOUT_QUEUE.add(this); // Add this customer to the Checkout Queue
+
 
 
 

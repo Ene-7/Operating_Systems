@@ -6,27 +6,19 @@
 */
 
 import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Store {
     public static Manager[] Managers; // This will contain the number of managers. The project only mentions one so the program is built to only work with one manager.
-    public static Employee[] Employees; // The number of Employees is now equivalent to the number of Registers. //TODO the program needs to be modified from the previous to handle multiple employees this time around.
+    public static Employee[] Employees; // The number of Employees is now equivalent to the number of Registers (NumSelf_Checkout);
     public static Customer[] Customers; // Customers will be specified by the command line argument and this array will be sized accordingly.
     public static int NumCustomers; // Number of total customers that will be shopping, provided as an input argument
     public static final int Store_Capacity = 6; // How many people can shop at a time
-    public static final int NumSelf_Checkout = 4; // Number of Self Checkout registers
-    public static long time = System.currentTimeMillis(); // The start of the Heavyweight Main/Store Thread.
-    public static ConcurrentLinkedQueue<Customer> CUSTOMER_QUEUE = new ConcurrentLinkedQueue<Customer>(); //Customers waiting to get in and shop. Not sure If this will still be needed semaphore will handle everything to be queued
-    public static ConcurrentLinkedQueue<Customer> CUSTOMER_CHECKOUT_QUEUE = new ConcurrentLinkedQueue<Customer>(); // Checkout Queue when customers have their stuff ready to purchase.
-    //public static AtomicInteger CUSTOMERS_SHOPPING = new AtomicInteger(0); // Number of Current Shoppers inside the store. Atomic Integer to keep it thread safe.
-    //public static AtomicBoolean STORE_IS_OPEN =  new AtomicBoolean(false); // Store Starts off Closed. Must be opened up by the Manager once he sees enough people lining up.
-    public static AtomicBoolean EMPLOYEE_IS_HERE =  new AtomicBoolean(false); // Is the Employee at work yet? (Used in Manager class to open up store).
-    //public static Customer[] CHECKOUT_REGISTERS = new Customer[NumSelf_Checkout]; // This will hold values if the checkout register is available or not. It will be checked by the store Employee to direct Customers to an available spot.
-    public static final Semaphore STORE_IS_OPEN_SEMAPHORE = new Semaphore(1, true);
-    public static final Semaphore STORE_CAPACITY_ENTRY = new Semaphore(6, true);
+    public static final int NumSelf_Checkout = 3; // Number of Self Checkout registers
+    public static long time = System.currentTimeMillis(); // The start time of the Heavyweight Main/Store Thread.
+    public static final Semaphore STORE_IS_OPEN_SEMAPHORE = new Semaphore(1, true); // Binary Semaphore that will block all customers from entering the store if it's closed.
+    public static final Semaphore MUTEX = new Semaphore(1, true); // Binary Semaphore To ensure no load and store issues arise for any counters. Usage of volatile variables is not permitted, so a mutex is necessary.
+    public static final Semaphore STORE_CAPACITY_ENTRY = new Semaphore(Store_Capacity, true);
 
 
 
@@ -39,7 +31,7 @@ public class Store {
             } // As requested, the number of Customers will be specified by an argument value.
 
         Managers = new Manager[1]; // Only one manager is referenced in the assignment, and they will open up the store and leave after there's no more customers in queue to enter.
-        Employees = new Employee[1]; // Only one employee is created, the exact number of employees is not specified in the assignment but I assume it is one based on it's singular noun mentioned at the last paragraph where customers leave.
+        Employees = new Employee[NumSelf_Checkout]; // Only one employee is created, the exact number of employees is not specified in the assignment but I assume it is one based on it's singular noun mentioned at the last paragraph where customers leave.
         Customers = new Customer[NumCustomers]; // Customer count will be determined by the input argument as requested.
         try {
             STORE_IS_OPEN_SEMAPHORE.acquire();

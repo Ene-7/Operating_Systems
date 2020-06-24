@@ -21,19 +21,16 @@ public class Manager implements Runnable{
         }
 
         msg("I've made it to work. Let me wait until my Employee is here so I can open the store.");
-        while(!Store.EMPLOYEE_IS_HERE.get()){
-            //Busy Wait, Can't open the store until the employee comes to work.
-        }
+
 
         msg("The store is now open! Come in everyone. Remember to stay 6 feet apart!");
-        //Store.STORE_IS_OPEN.set(true); // Sets the store to open.
+
         Store.STORE_IS_OPEN_SEMAPHORE.release(); //open the store.
 
         // MANAGER CAN ONLY LEAVE ONCE THERE ARE NO MORE CUSTOMERS WAITING OUTSIDE TO GET IN
-        // ONCE THE CUSTOMER_QUEUE IS EMPTY MANAGER HEADS HOME.
-        while(!Store.CUSTOMER_QUEUE.isEmpty()){
-            // BW (Keep assisting the Customers entering the store until none are left)
-        }
+
+
+
         msg("Looks like that's all of them. I'm heading home!");
     }
 
