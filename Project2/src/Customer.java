@@ -41,8 +41,12 @@ public class Customer implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         Store.STORE_IS_OPEN_SEMAPHORE.release(); // release semaphore for the next customer to know the store is open. This will help keep them in order of arrival.
+
+
+
+
+        // GROUP CUSTOMERS:
 
         try {
             Store.MUTEX.acquire();
@@ -50,24 +54,31 @@ public class Customer implements Runnable {
             e.printStackTrace();
         } // P(Mutex), this will keep the counter variable safe.
 
-        Store.CustomerCount++;
-        if(Store.CustomerCount % Store.Store_Capacity == 0 || Store.CustomerCount == Store.NumCustomers){ // If the group has been form or we're the last one in
-            Store.MUTEX.release(); // release the mutex for the other customers
+        Store.CustomerInCount++;
+        if(Store.CustomerInCount % Store.Store_Capacity == 0 || Store.CustomerInCount == Store.NumCustomers){ // If the group has been form or we're the last one in can't form a full group
+            Store.MUTEX.release(); // release the mutex for the other customers V(MUTEX);
+
+            //This will block any other groups from coming in the store until the preceding group has finished shopping and have left the store.
+            try {
+                Store.GROUP_IN_SESSION.acquire(); // The first group won't block because semaphore is initialized to 1.
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             for(int i = 1; i < Store.Store_Capacity; i++){
-                Store.STORE_CAPACITY_ENTRY.release(); // Release everyone that's waiting in the group to go in the store.
+                Store.STORE_CAPACITY_GROUP.release(); //Last one to join group releases everyone that's waiting in the group to go in the store.
             }
         }
         else{
             Store.MUTEX.release(); // release the mutex for the next customer thread.
             try {
-                Store.STORE_CAPACITY_ENTRY.acquire(); // Block until group of 6 is formed then proceed.
+                Store.STORE_CAPACITY_GROUP.acquire(); // Block until group of 6 is formed then proceed.
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
         msg("I'm finally inside and can shop. I better stay away from others, they could be sick!");
-
 
 
 
@@ -81,7 +92,7 @@ public class Customer implements Runnable {
 
 
 
-        // SELF CHECKOUT SECTION:
+        //TODO SELF CHECKOUT SECTION:
 
         msg("I got what I needed. Time to head to the checkout!");
 
@@ -97,7 +108,7 @@ public class Customer implements Runnable {
 
 
 
-        // WAITING TO BE DIRECTED TO A REGISTER BY THE EMPLOYEE:
+        //TODO  WAITING TO BE DIRECTED TO A REGISTER BY THE EMPLOYEE:
 
 
         try {
@@ -106,11 +117,26 @@ public class Customer implements Runnable {
             e.printStackTrace();
         } //It is necessary to do this because if they pay instantly then every customer only uses register 1.
 
-        //Traffic Jam Event, Sleep until Employee handles it
+        //Traffic Jam Event, Wait until Employee handles it
+        try {
+            Store.MUTEX.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Store.CustomerOutCount++;
+        if(Store.CustomerOutCount == Store.Store_Capacity){ // If this is the last person of the group that is currently shopping Release the other people to allow them to form a group.
+            //This won't release if the last group of people is under the Store Capacity requirement but it doesn't matter because there will be no other customers that need to be released anyway
+            Store.GROUP_IN_SESSION.release(); // Release the Waiting Group and allow them to come in to shop
+            Store.CustomerOutCount = 0; //Set the counter back to 0
+        }
+
+
+        Store.MUTEX.release();
+
         msg("Got what I needed. Uh oh there's a traffic jam outside I can't leave!!!");
 
 
-        // Wait for employee to permit exit.
+        // Wait for employee to permit exit. //Todo add another semaphore to make them wait.
 
 
         msg("=== HAS LEFT THE PARKING LOT ===");
@@ -119,7 +145,7 @@ public class Customer implements Runnable {
 
     //Message method suggested and provided by the assignment.
     public void msg(String m) {
-        if(this.isElder)
+        if(this.isElder) // I should have added this on the first project. It would have helped notice the Elderly but I've done so for this one at least. :^)
             System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName() +": "+m +" [THIS CUSTOMER IS AN ELDER]");
         else
             System.out.println("["+(System.currentTimeMillis()- Store.time)+"] "+getName()+": "+m);
