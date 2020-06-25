@@ -18,8 +18,9 @@ public class Store {
     public static long time = System.currentTimeMillis(); // The start time of the Heavyweight Main/Store Thread.
     public static final Semaphore STORE_IS_OPEN_SEMAPHORE = new Semaphore(1, true); // Binary Semaphore that will block all customers from entering the store if it's closed.
     public static final Semaphore MUTEX = new Semaphore(1, true); // Binary Semaphore To ensure no load and store issues arise for any counters. Usage of volatile variables is not permitted, so a mutex is necessary.
-    public static final Semaphore STORE_CAPACITY_ENTRY = new Semaphore(Store_Capacity, true); // Counting Semaphore that will allow customer to enter in groups of size Store Capacity.
+    public static final Semaphore STORE_CAPACITY_ENTRY = new Semaphore(0, true); // Counting Semaphore that will allow customer to enter in groups of size Store Capacity.
     public static final Semaphore WAIT_FOR_EMPLOYEES = new Semaphore(0, true); // Counting Semaphore that will be used by Manager to wait and will be released by all the Employees.
+    public static int CustomerCount = 0; // Count the customers that are going in.
 
 
     public static void main(String[] args){

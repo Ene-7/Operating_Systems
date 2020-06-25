@@ -2,7 +2,6 @@
 public class Customer implements Runnable {
     private String Name; // The name of the Customer.
     private boolean isElder = false; // Is this Customer old or not. This will help determine if they can get priority self checkout from other customers.
-    private boolean isCalled = false; // This will help for the checkout register and also for when customers need to leave
     private Thread CustomerThread; // The thread.
 
     Customer(String Num, int Elder_Chance){
@@ -46,9 +45,25 @@ public class Customer implements Runnable {
         Store.STORE_IS_OPEN_SEMAPHORE.release(); // release semaphore for the next customer to know the store is open. This will help keep them in order of arrival.
 
         try {
-            Store.STORE_CAPACITY_ENTRY.acquire(); // Allow only enough customers as the Store Capacity.
+            Store.MUTEX.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } // P(Mutex), this will keep the counter variable safe.
+
+        Store.CustomerCount++;
+        if(Store.CustomerCount % Store.Store_Capacity == 0 || Store.CustomerCount == Store.NumCustomers){ // If the group has been form or we're the last one in
+            Store.MUTEX.release(); // release the mutex for the other customers
+            for(int i = 1; i < Store.Store_Capacity; i++){
+                Store.STORE_CAPACITY_ENTRY.release(); // Release everyone that's waiting in the group to go in the store.
+            }
+        }
+        else{
+            Store.MUTEX.release(); // release the mutex for the next customer thread.
+            try {
+                Store.STORE_CAPACITY_ENTRY.acquire(); // Block until group of 6 is formed then proceed.
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         msg("I'm finally inside and can shop. I better stay away from others, they could be sick!");
