@@ -40,11 +40,7 @@ public class Employee implements Runnable {
 
         do {
 
-            try {
-                Store.MUTEX2.acquire();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
 
            /* if(Store.CustomerOutCount == Store.NumCustomers){
                 break; //If all the customers have shopped for today
@@ -54,11 +50,22 @@ public class Employee implements Runnable {
                 //ElderlyCheckoutNum is randomly determined between a range of 1 to numRegisters. I've done this so it can work for any sizes of numRegisters should it need to change.
                 //Also I assign the Employee who's number matches the Register chosen to serve the Elderly. I think it makes sense to do so :)
 
+
+
+
                 try {
                     Store.ELDER_CHECKOUT_IN.acquire(); // Wait until an Elderly customer shows up to pay.
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
+                try {
+                    Store.MUTEX2.acquire();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                msg("Hey " + Store.CurrentCustomer + " come to my register [Register: " + Number + "]"); // this should be seen as a CS because the CurrentCustomer (Name of Customer) is shared...
 
                 try {
                     this.EmployeeThread.sleep(Store.RandomInt(3000,5000)); // Random time of packing bags & receiving payment.
@@ -67,6 +74,7 @@ public class Employee implements Runnable {
                 }
 
                 Store.ELDER_CHECKOUT_PAY.release(); // Release the Elderly Customer because they've now paid and they can now leave.
+                Store.MUTEX2.release();
 
             }
 
@@ -80,16 +88,23 @@ public class Employee implements Runnable {
                 }
 
                 try {
+                    Store.MUTEX2.acquire();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                msg("Hey " + Store.CurrentCustomer + " come to my register [Register: " + Number + "]"); // this should be seen as a CS because the CurrentCustomer (Name of Customer) is shared...
+
+                try {
                     this.EmployeeThread.sleep(Store.RandomInt(3000,5000)); // Random time of packing bags & receiving payment.
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
+                Store.CHECKOUT_REGISTER.release(); // Release the regular customer from paying.
+                Store.MUTEX2.release();
 
             }
-            msg("Hey " + Store.CurrentCustomer + " come to my register [Register: " + Number + "]"); // this should be seen as a CS because the CurrentCustomer (Name of Customer) is shared...
-
-            Store.MUTEX2.release();
 
         } while (Store.CustomerOutCount != Store.NumCustomers);
 
