@@ -110,14 +110,24 @@ public class Customer implements Runnable {
             e.printStackTrace();
         }
 
-            Store.CurrentCustomer = this.Name; // Tells the name to the Store so the Employee can call you over when they're free to take another customer. We need some way for the Employee to know who's supposed to be called next
-            // I can't think of a better way...
-            //TODO FINISH CHECKOUT BIT
+        Store.CurrentCustomer = this.Name; // Tells the name to the Store so the Employee can call you over when they're free to take another customer. We need some way for the Employee to know who's supposed to be called next
+        // I can't think of a better way...
 
-        try {
-            Store.CHECKOUT_REGISTER.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(this.isElder){
+            Store.ELDER_CHECKOUT_IN.release(); // Allow the Employee to serve you.
+            try {
+                Store.ELDER_CHECKOUT_PAY.acquire(); // Wait until you've paid or done getting your stuff in the grocery bags or what not this can't just happen instantly
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        else {
+            try {
+                Store.CHECKOUT_REGISTER.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
 

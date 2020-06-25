@@ -14,7 +14,7 @@ public class Store {
     public static Customer[] Customers; // Customers will be specified by the command line argument and this array will be sized accordingly.
     public static int NumCustomers; // Number of total customers that will be shopping, provided as an input argument
     public static final int Store_Capacity = 6; // How many people can shop at a time
-    public static final int NumSelf_Checkout = 3; // Number of Self Checkout registers
+    public static final int NumRegisters = 3; // Number of Self Checkout registers
     public static long time = System.currentTimeMillis(); // The start time of the Heavyweight Main/Store Thread.
     public static final Semaphore STORE_IS_OPEN_SEMAPHORE = new Semaphore(1, true); // Binary Semaphore that will block all customers from entering the store if it's closed.
     public static final Semaphore MUTEX = new Semaphore(1, true); // Binary Semaphore To ensure no load and store issues arise for any counters. Usage of volatile variables is not permitted, so a mutex is necessary.
@@ -22,10 +22,14 @@ public class Store {
     public static final Semaphore WAIT_FOR_EMPLOYEES = new Semaphore(0, true); // Counting Semaphore that will be used by Manager to wait and will be released by all the Employees.
     public static final Semaphore GROUP_IN_SESSION = new Semaphore(1, true); // Binary Semaphore that will Hold other customers from forming groups until the preceding group is done.
     public static final Semaphore MANAGER_WORK = new Semaphore(0, true); // Semaphore for Manager to go home after everyone has formed a group to go inside the store.
-    public static final Semaphore CHECKOUT_REGISTER = new Semaphore(3, true); // Counting Semaphore for the Checkout.
+    public static final Semaphore CHECKOUT_REGISTER = new Semaphore(0, true); // Counting Semaphore for the Checkout.
+    public static final Semaphore MUTEX2 = new Semaphore(1, true); // Binary Semaphore To ensure no load and store issues arise for any counters. Usage of volatile variables is not permitted, so a mutex is necessary.
+    public static final Semaphore ELDER_CHECKOUT_IN = new Semaphore(0, true); // Binary Semaphore that will make the Employee wait until an elderly person arrives to pay.
+    public static final Semaphore ELDER_CHECKOUT_PAY = new Semaphore(0, true); // Binary Semaphore that will make the Employee wait until an elderly person arrives to pay.
+
 
     public static String CurrentCustomer;
-    public static final int ElderlyCheckoutNum = RandomInt(1,NumSelf_Checkout); // A random register is picked to be designated for only the Elderly. I do this so I don't hard code a register and want this to work for different checkout sizes.
+    public static final int ElderlyCheckoutNum = RandomInt(1, NumRegisters); // A random register is picked to be designated for only the Elderly. I do this so I don't hard code a register and want this to work for different checkout sizes.
     public static int CustomerInCount = 0; // Count the customers that are going in.
     public static int CustomerOutCount = 0; // Count the customers that are going in.
 
@@ -38,7 +42,7 @@ public class Store {
             } // As requested, the number of Customers will be specified by an argument value.
 
         Managers = new Manager[1]; // Only one manager is referenced in the assignment, and they will open up the store and leave after there's no more customers in queue to enter.
-        Employees = new Employee[NumSelf_Checkout]; // For Project 2 we are told that we need as many Employees as we have registers.
+        Employees = new Employee[NumRegisters]; // For Project 2 we are told that we need as many Employees as we have registers.
         Customers = new Customer[NumCustomers]; // Customer count will be determined by the input argument as requested.
         try {
             STORE_IS_OPEN_SEMAPHORE.acquire();
