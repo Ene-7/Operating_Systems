@@ -21,6 +21,8 @@ public class Store {
     public static final Semaphore STORE_CAPACITY_GROUP = new Semaphore(0, true); // Counting Semaphore that will allow customer to enter in groups of size Store Capacity.
     public static final Semaphore WAIT_FOR_EMPLOYEES = new Semaphore(0, true); // Counting Semaphore that will be used by Manager to wait and will be released by all the Employees.
     public static final Semaphore GROUP_IN_SESSION = new Semaphore(1, true); // Binary Semaphore that will Hold other customers from forming groups until the preceding group is done.
+    public static final Semaphore MANAGER_WORK = new Semaphore(0, true); // Semaphore for Manager to go home after everyone has formed a group to go inside the store.
+
 
     public static int CustomerInCount = 0; // Count the customers that are going in.
     public static int CustomerOutCount = 0; // Count the customers that are going in.

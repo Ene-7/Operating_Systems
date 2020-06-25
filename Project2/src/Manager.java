@@ -35,8 +35,11 @@ public class Manager implements Runnable{
         Store.STORE_IS_OPEN_SEMAPHORE.release(); //opens the store for the customers to start coming in.
 
         // MANAGER CAN ONLY LEAVE ONCE THERE ARE NO MORE CUSTOMERS WAITING OUTSIDE TO GET IN
-
-
+        try {
+            Store.MANAGER_WORK.acquire(); // Wait until all the customers form groups.
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         msg("Looks like that's all of them. I'm heading home!");
     }

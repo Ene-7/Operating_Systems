@@ -55,6 +55,9 @@ public class Customer implements Runnable {
         } // P(Mutex), this will keep the counter variable safe.
 
         Store.CustomerInCount++;
+        if(Store.CustomerInCount == Store.NumCustomers) {
+            Store.MANAGER_WORK.release(); // If the last person forms a group then the Manager is done with his job and can go home.
+        }
         if(Store.CustomerInCount % Store.Store_Capacity == 0 || Store.CustomerInCount == Store.NumCustomers){ // If the group has been form or we're the last one in can't form a full group
             Store.MUTEX.release(); // release the mutex for the other customers V(MUTEX);
 
