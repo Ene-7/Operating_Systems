@@ -45,7 +45,6 @@ public class Employee implements Runnable {
                 //ElderlyCheckoutNum is randomly determined between a range of 1 to numRegisters. I've done this so it can work for any sizes of numRegisters should it need to change.
                 //Also I assign the Employee who's number matches the Register chosen to serve the Elderly. I think it makes sense to do so :)
 
-
                 try {
                     Store.ELDER_CHECKOUT_IN.acquire(); // Wait until an Elderly customer shows up to pay.
                 } catch (InterruptedException e) {
@@ -69,7 +68,7 @@ public class Employee implements Runnable {
                 Store.ELDER_CHECKOUT_PAY.release(); // Release the Elderly Customer because they've now paid and they can now leave.
                 Store.MUTEX.release();
 
-            }
+            } // IF
 
 
             else { // Else, the this is the other Employees working the regular Checkout registers and must serve regular people.

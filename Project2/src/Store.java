@@ -24,12 +24,14 @@ public class Store {
     public static final Semaphore GROUP_IN_SESSION = new Semaphore(1, true); // Binary Semaphore that will Hold other customers from forming groups until the preceding group is done.
     public static final Semaphore MANAGER_WORK = new Semaphore(0, true); // Semaphore for Manager to go home after everyone has formed a group to go inside the store.
     public static final Semaphore CHECKOUT_REGISTER = new Semaphore(0, true); // Counting Semaphore for the Checkout.
-    public static final Semaphore MUTEX2 = new Semaphore(1, true); // Binary Semaphore To ensure no load and store issues arise for any counters. Usage of volatile variables is not permitted, so a mutex is necessary.
     public static final Semaphore ELDER_CHECKOUT_IN = new Semaphore(0, true); // Binary Semaphore that will make the Employee wait until an elderly person arrives to pay.
     public static final Semaphore ELDER_CHECKOUT_PAY = new Semaphore(1, true); // Binary Semaphore that will make the Employee wait until an elderly person arrives to pay.
-    public static Semaphore[] Register_Availability = new Semaphore[NumRegisters]; // This will be used to check if the current Register is available.
 
-    public static String CurrentCustomer;
+
+    public static final Semaphore[] CUSTOMER_EXIT_SEMAPHORE = new Semaphore[NumCustomers]; // Will hold all the Customers Blocked until an Employee gets out and lets them leave in order.
+    public static Semaphore[] REGISTER_AVAILABILITY = new Semaphore[NumRegisters]; // This will be used to check if the current Register is available.
+
+    public static String CurrentCustomer; //Will help communicate who's being called to the Register by the Employee
     public static final int ElderlyCheckoutNum = RandomInt(1, NumRegisters); // A random register is picked to be designated for only the Elderly. I do this so I don't hard code a register and want this to work for different checkout sizes.
     public static int CustomerInCount = 0; // Count the customers that are going in.
     public static int CustomerOutCount = 0; // Count the customers that are going in.
@@ -65,6 +67,18 @@ public class Store {
         for(int i = 0; i < Customers.length; i++){
             Customers[i] = new Customer(Integer.toString(i+1), RandomInt(1,4)); // Will Create NumCustomers, along with a 25% probability of them being Elderly.
         }
+
+        //Initialize Semaphore Arrays:
+
+        for(int i = 0; i < REGISTER_AVAILABILITY.length; i++){
+            REGISTER_AVAILABILITY[i] = new Semaphore(1,true); // Initialize the
+        }
+
+        for(int i = 0; i < CUSTOMER_EXIT_SEMAPHORE.length; i++){
+            CUSTOMER_EXIT_SEMAPHORE[i] = new Semaphore(0,true); // Customers Cannot leave the Parking lot until an Employee Permits them to.
+        }
+
+
 
         // Starts the threads
         for (Manager manager : Managers) {

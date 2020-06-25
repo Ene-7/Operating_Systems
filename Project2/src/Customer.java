@@ -2,10 +2,12 @@
 public class Customer implements Runnable {
     private String Name; // The name of the Customer.
     private boolean isElder = false; // Is this Customer old or not. This will help determine if they can get priority self checkout from other customers.
+    private String Number;
     private Thread CustomerThread; // The thread.
 
     Customer(String Num, int Elder_Chance){
         setName("Customer_" + Num);
+        this.Number = Num; // Hold the Number value of customer will help when we have to exit in order
         this.CustomerThread = new Thread(this, Name);
         if(Elder_Chance == 4) this.isElder = true;
         // The assignment says that about 25% of the customers are elderly,
@@ -131,11 +133,11 @@ public class Customer implements Runnable {
             while(pickRegister == Store.ElderlyCheckoutNum) // Make sure not to pick the Elderly Register, because it's exclusively designated for them.
              pickRegister = Store.RandomInt(1, Store.NumRegisters);
 
-            for(int i = 0; i < Store.Register_Availability.length; i++){ // Go through all the registers if it's the one that is picked Wait in it.
+            for(int i = 1; i < Store.REGISTER_AVAILABILITY.length+1; i++){ // Go through all the registers if it's the one that is picked Wait in it.
                 if(pickRegister == i){
                     try {
                         Store.MUTEX.release();
-                        Store.Register_Availability[i].acquire(); // Block until the Employee is ready to serve.
+                        Store.REGISTER_AVAILABILITY[i].acquire(); // Block until the Employee is ready to serve.
                         msg("Finally bought my stuff.");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -178,8 +180,11 @@ public class Customer implements Runnable {
         //Traffic Jam Event, Wait until Employee handles it
 
         // Wait for employee to permit exit. //Todo add another semaphore to make them wait.
-
-
+        try {
+            Store.CUSTOMER_EXIT_SEMAPHORE[Integer.parseInt(this.Number)].acquire(); // Block until Allowed to Leave im Order by an Employee.
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         msg("=== HAS LEFT THE PARKING LOT ===");
     }
 
