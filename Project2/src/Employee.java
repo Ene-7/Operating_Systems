@@ -1,10 +1,12 @@
 public class Employee implements Runnable {
     private String name;
+    private String Number;
     private Thread EmployeeThread;
 
     Employee(String Num){
        setName("Employee_" + Num);
-        this.EmployeeThread = new Thread(this, name);
+       this.Number = Num;
+       this.EmployeeThread = new Thread(this, name);
     }
 
     public void setName(String in){
@@ -36,8 +38,24 @@ public class Employee implements Runnable {
 
         Store.WAIT_FOR_EMPLOYEES.release(); // will release the semaphore and eventually once all employees do this, the manager will open the store because everyone came to work.
 
+        do {
 
+            try {
+                Store.MUTEX.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
+            try {
+                Store.CHECKOUT_REGISTER.acquire(); // Wait at Register for customer to come and pay.
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            msg("Hey " + Store.CurrentCustomer + " come to my register [Register: " + Number + "]");
+
+            Store.MUTEX.release();
+
+        } while (Store.CustomerOutCount != Store.NumCustomers);
 
         msg("I'm done for the day!");
 

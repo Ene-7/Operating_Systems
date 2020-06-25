@@ -36,14 +36,15 @@ public class Customer implements Runnable {
         }
         msg("I've arrived at the stores' parking lot, and I'm now in the queue waiting to go in.");
 
+
+        // Wait for Store to Open:
+
         try {
             Store.STORE_IS_OPEN_SEMAPHORE.acquire(); // Wait until Manager notifies the store is open.
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         Store.STORE_IS_OPEN_SEMAPHORE.release(); // release semaphore for the next customer to know the store is open. This will help keep them in order of arrival.
-
-
 
 
         // GROUP CUSTOMERS:
@@ -84,7 +85,6 @@ public class Customer implements Runnable {
         msg("I'm finally inside and can shop. I better stay away from others, they could be sick!");
 
 
-
         //Simulate Shop Time
         try {
             this.CustomerThread.sleep(Store.RandomInt(5000,10000)); // 5 to 10 seconds
@@ -93,19 +93,35 @@ public class Customer implements Runnable {
         }
 
 
-
-
-        //TODO SELF CHECKOUT SECTION:
+        //CHECKOUT SECTION:
 
         msg("I got what I needed. Time to head to the checkout!");
 
+        try {
+            this.CustomerThread.sleep(Store.RandomInt(2000,5000)); //Sleep for 2 to 5 Seconds to simulate rushing to the checkout. This was required for project one not sure if it's supposed
+        } catch (InterruptedException e) {                         //to be part of project 2 as well.
+            e.printStackTrace();
+        }
+
 
         try {
-            this.CustomerThread.sleep(Store.RandomInt(2000,5000)); //Sleep for 2 to 5 Seconds to simulate rushing to the checkout
+            Store.MUTEX.acquire(); //Use Mutex to keep ME satisfied
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
+            Store.CurrentCustomer = this.Name; // Tells the name to the Store so the Employee can call you over when they're free to take another customer. We need some way for the Employee to know who's supposed to be called next
+            // I can't think of a better way...
+            //TODO FINISH CHECKOUT BIT
+
+        try {
+            Store.CHECKOUT_REGISTER.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        Store.MUTEX.release();
 
 
 
@@ -120,24 +136,23 @@ public class Customer implements Runnable {
             e.printStackTrace();
         } //It is necessary to do this because if they pay instantly then every customer only uses register 1.
 
-        //Traffic Jam Event, Wait until Employee handles it
         try {
             Store.MUTEX.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         Store.CustomerOutCount++;
-        if(Store.CustomerOutCount == Store.Store_Capacity){ // If this is the last person of the group that is currently shopping Release the other people to allow them to form a group.
+        if(Store.CustomerOutCount % Store.Store_Capacity == 0){ // If this is the last person of the group that is currently shopping Release the other people to allow them to form a group.
             //This won't release if the last group of people is under the Store Capacity requirement but it doesn't matter because there will be no other customers that need to be released anyway
             Store.GROUP_IN_SESSION.release(); // Release the Waiting Group and allow them to come in to shop
-            Store.CustomerOutCount = 0; //Set the counter back to 0
+            //Store.CustomerOutCount = 0; //Set the counter back to 0
         }
-
 
         Store.MUTEX.release();
 
         msg("Got what I needed. Uh oh there's a traffic jam outside I can't leave!!!");
-
+        //Traffic Jam Event, Wait until Employee handles it
 
         // Wait for employee to permit exit. //Todo add another semaphore to make them wait.
 

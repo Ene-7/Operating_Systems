@@ -22,8 +22,10 @@ public class Store {
     public static final Semaphore WAIT_FOR_EMPLOYEES = new Semaphore(0, true); // Counting Semaphore that will be used by Manager to wait and will be released by all the Employees.
     public static final Semaphore GROUP_IN_SESSION = new Semaphore(1, true); // Binary Semaphore that will Hold other customers from forming groups until the preceding group is done.
     public static final Semaphore MANAGER_WORK = new Semaphore(0, true); // Semaphore for Manager to go home after everyone has formed a group to go inside the store.
+    public static final Semaphore CHECKOUT_REGISTER = new Semaphore(3, true); // Counting Semaphore for the Checkout.
 
-
+    public static String CurrentCustomer;
+    public static final int ElderlyCheckoutNum = RandomInt(1,NumSelf_Checkout); // A random register is picked to be designated for only the Elderly. I do this so I don't hard code a register and want this to work for different checkout sizes.
     public static int CustomerInCount = 0; // Count the customers that are going in.
     public static int CustomerOutCount = 0; // Count the customers that are going in.
 
