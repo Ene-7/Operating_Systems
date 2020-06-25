@@ -52,7 +52,7 @@ public class Employee implements Runnable {
                 }
 
                 try {
-                    Store.MUTEX.acquire();
+                    Store.MUTEX2.acquire();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -66,7 +66,7 @@ public class Employee implements Runnable {
                 }
 
                 Store.ELDER_CHECKOUT_PAY.release(); // Release the Elderly Customer because they've now paid and they can now leave.
-                Store.MUTEX.release();
+                Store.MUTEX2.release();
 
             } // IF
 
@@ -80,12 +80,16 @@ public class Employee implements Runnable {
                 }
 
                 try {
-                    Store.MUTEX.acquire();
+                    Store.MUTEX2.acquire();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
                 msg("Hey " + Store.CurrentCustomer + " come to my register [Register: " + Number + "]"); // this should be seen as a CS because the CurrentCustomer (Name of Customer) is shared...
+
+                for(int i = 0; i < Store.REGISTER_AVAILABILITY.length; i++){
+                    Store.REGISTER_AVAILABILITY[i].release();
+                }
 
                 try {
                     this.EmployeeThread.sleep(Store.RandomInt(3000,5000)); // Random time of packing bags & receiving payment.
@@ -93,16 +97,23 @@ public class Employee implements Runnable {
                     e.printStackTrace();
                 }
 
-                Store.CHECKOUT_REGISTER.release(); // Release the regular customer from paying.
-                Store.MUTEX.release();
+                Store.MUTEX2.release();
 
             }
 
         } while (Store.CustomerOutCount != Store.NumCustomers);
 
+        //Wait until the Last Customer
+
+
 
         //TODO Counting Semaphore where the employee releases all the waiting customers in order. Use an array of semaphores?
+        if(Integer.parseInt(this.Number) == Store.NumRegisters){ // if this is the last Employee, then let him resolve the traffic issue and allow everyone else to go home.
+            for(int i = 0; i < Store.CUSTOMER_EXIT_SEMAPHORE.length; i++){
+                Store.CUSTOMER_EXIT_SEMAPHORE[i].release();
+            }
 
+        }
 
         msg("I'm done for the day!");
 

@@ -26,9 +26,10 @@ public class Store {
     public static final Semaphore CHECKOUT_REGISTER = new Semaphore(0, true); // Counting Semaphore for the Checkout.
     public static final Semaphore ELDER_CHECKOUT_IN = new Semaphore(0, true); // Binary Semaphore that will make the Employee wait until an elderly person arrives to pay.
     public static final Semaphore ELDER_CHECKOUT_PAY = new Semaphore(1, true); // Binary Semaphore that will make the Employee wait until an elderly person arrives to pay.
+    public static final Semaphore MUTEX2 = new Semaphore(1, true); // Binary Semaphore To ensure no load and store issues arise for any counters. Usage of volatile variables is not permitted, so a mutex is necessary.
 
 
-    public static final Semaphore[] CUSTOMER_EXIT_SEMAPHORE = new Semaphore[NumCustomers]; // Will hold all the Customers Blocked until an Employee gets out and lets them leave in order.
+    public static Semaphore[] CUSTOMER_EXIT_SEMAPHORE; // Will hold all the Customers Blocked until an Employee gets out and lets them leave in order.
     public static Semaphore[] REGISTER_AVAILABILITY = new Semaphore[NumRegisters]; // This will be used to check if the current Register is available.
 
     public static String CurrentCustomer; //Will help communicate who's being called to the Register by the Employee
@@ -42,13 +43,14 @@ public class Store {
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 e.printStackTrace();
                 System.out.println("Invalid Input. Input Should Be An Integer Value. Please Reconfigure The Arguments And Try Again.");
+                System.exit(-1); // I know you said not to use this but the program should really terminate on a bad input. This is not used elsewhere.
             } // As requested, the number of Customers will be specified by an argument value.
 
         System.out.println("General Information:"+
                 "\nNumber of Customers: " + NumCustomers+
                 "\nNumber of Employees & Registers: " + NumRegisters +
                 "\nStore Capacity: "+ Store_Capacity +
-                "\nDesignated Register Number for the Elderly: " + ElderlyCheckoutNum + " (Meaning the elderly and only them will use Register " + ElderlyCheckoutNum + ")" +
+                "\nDesignated Register Number for the Elderly: " + ElderlyCheckoutNum + " (Meaning only the Elderly will use Register " + ElderlyCheckoutNum + ")" +
                 "\nThis is just general information about the initializing variables for the program. (Helps me keep track)");
 
         Managers = new Manager[1]; // Only one manager is referenced in the assignment, and they will open up the store and leave after there's no more customers in queue to enter.
@@ -70,14 +72,15 @@ public class Store {
 
         //Initialize Semaphore Arrays:
 
+        CUSTOMER_EXIT_SEMAPHORE = new Semaphore[NumCustomers];
+
         for(int i = 0; i < REGISTER_AVAILABILITY.length; i++){
-            REGISTER_AVAILABILITY[i] = new Semaphore(1,true); // Initialize the
+            REGISTER_AVAILABILITY[i] = new Semaphore(0,true); // Initialize the semaphores to 0
         }
 
         for(int i = 0; i < CUSTOMER_EXIT_SEMAPHORE.length; i++){
             CUSTOMER_EXIT_SEMAPHORE[i] = new Semaphore(0,true); // Customers Cannot leave the Parking lot until an Employee Permits them to.
         }
-
 
 
         // Starts the threads

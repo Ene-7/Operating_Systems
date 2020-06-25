@@ -117,26 +117,26 @@ public class Customer implements Runnable {
 
         if(this.isElder){
             Store.ELDER_CHECKOUT_IN.release(); // Allow the Employee to serve you.
-            msg("Finally paying for my stuff.");
-            //I was adding a mutex here? //todo look back here?
             Store.MUTEX.release();
             try {
                 Store.ELDER_CHECKOUT_PAY.acquire(); // Wait until you've paid or done getting your stuff in the grocery bags or what not this can't just happen instantly
+                msg("Finally bought my stuff.");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        } // IF ELDER
 
-        else { // Else if this is a normal Customer (Not Elderly), then randomly decide where they should wait in line to pay for.
+        else { //Else if this is a normal Customer (Not Elderly), then randomly decide where they should wait in line to pay for.
             //Remove Points for this, I am Randomly picking where (Which Employee to wait for) the Customer should wait for in line for the Register. I don't think this is what's requested but I don't know how else to handle this situation. Sorry.
             int pickRegister = 1; // Default Register to pick for a Normal Customer, if it happens to be the Elderly one then the customer must pick another one randomly to wait in.
             while(pickRegister == Store.ElderlyCheckoutNum) // Make sure not to pick the Elderly Register, because it's exclusively designated for them.
              pickRegister = Store.RandomInt(1, Store.NumRegisters);
 
-            for(int i = 1; i < Store.REGISTER_AVAILABILITY.length+1; i++){ // Go through all the registers if it's the one that is picked Wait in it.
+            for(int i = 0; i < Store.REGISTER_AVAILABILITY.length; i++){ // Go through all the registers if it's the one that is picked Wait in it.
                 if(pickRegister == i){
                     try {
                         Store.MUTEX.release();
+                        Store.CHECKOUT_REGISTER.release(); // Release an employee
                         Store.REGISTER_AVAILABILITY[i].acquire(); // Block until the Employee is ready to serve.
                         msg("Finally bought my stuff.");
                     } catch (InterruptedException e) {
@@ -151,10 +151,6 @@ public class Customer implements Runnable {
 
 
 
-
-        //TODO  WAITING TO BE DIRECTED TO A REGISTER BY THE EMPLOYEE:
-
-
         try {
             this.CustomerThread.sleep(Store.RandomInt(2000,5000)); // Sleep for 2 to 5 seconds to simulate paying time.
         } catch (InterruptedException e) {
@@ -167,21 +163,21 @@ public class Customer implements Runnable {
             e.printStackTrace();
         }
 
-        Store.CustomerOutCount++;
+        Store.CustomerOutCount++; // CS must be protected by MUTEX semaphore.
         if(Store.CustomerOutCount % Store.Store_Capacity == 0){ // If this is the last person of the group that is currently shopping Release the other people to allow them to form a group.
             //This won't release if the last group of people is under the Store Capacity requirement but it doesn't matter because there will be no other customers that need to be released anyway
             Store.GROUP_IN_SESSION.release(); // Release the Waiting Group and allow them to come in to shop
-            //Store.CustomerOutCount = 0; //Set the counter back to 0
         }
-
+        msg("Got what I needed. Uh oh there's a traffic jam outside I can't leave!!!");
         Store.MUTEX.release();
 
-        msg("Got what I needed. Uh oh there's a traffic jam outside I can't leave!!!");
-        //Traffic Jam Event, Wait until Employee handles it
 
-        // Wait for employee to permit exit. //Todo add another semaphore to make them wait.
+
+
+
+        // Wait for employee to permit exit
         try {
-            Store.CUSTOMER_EXIT_SEMAPHORE[Integer.parseInt(this.Number)].acquire(); // Block until Allowed to Leave im Order by an Employee.
+            Store.CUSTOMER_EXIT_SEMAPHORE[Integer.parseInt(this.Number)-1].acquire(); // Block until Allowed to Leave im Order by an Employee. I subtract 1 because Customers are not French Counted.
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
