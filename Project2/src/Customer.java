@@ -124,10 +124,25 @@ public class Customer implements Runnable {
                 e.printStackTrace();
             }
         }
-        else {
-            Store.CHECKOUT_REGISTER.release();
-            msg("Finally paying for my stuff.");
-            Store.MUTEX.release();
+
+        else { // Else if this is a normal Customer (Not Elderly), then randomly decide where they should wait in line to pay for.
+            //Remove Points for this, I am Randomly picking where (Which Employee to wait for) the Customer should wait for in line for the Register. I don't think this is what's requested but I don't know how else to handle this situation. Sorry.
+            int pickRegister = 1; // Default Register to pick for a Normal Customer, if it happens to be the Elderly one then the customer must pick another one randomly to wait in.
+            while(pickRegister == Store.ElderlyCheckoutNum) // Make sure not to pick the Elderly Register, because it's exclusively designated for them.
+             pickRegister = Store.RandomInt(1, Store.NumRegisters);
+
+            for(int i = 0; i < Store.Register_Availability.length; i++){ // Go through all the registers if it's the one that is picked Wait in it.
+                if(pickRegister == i){
+                    try {
+                        Store.MUTEX.release();
+                        Store.Register_Availability[i].acquire(); // Block until the Employee is ready to serve.
+                        msg("Finally bought my stuff.");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
         }
 
 

@@ -17,7 +17,7 @@ public class Store {
     public static final int NumRegisters = 3; // Number of Self Checkout registers
     public static long time = System.currentTimeMillis(); // The start time of the Heavyweight Main/Store Thread.
 
-    public static final Semaphore STORE_IS_OPEN_SEMAPHORE = new Semaphore(1, true); // Binary Semaphore that will block all customers from entering the store if it's closed.
+    public static final Semaphore STORE_IS_OPEN_SEMAPHORE = new Semaphore(0, true); // Binary Semaphore that will block all customers from entering the store if it's closed.
     public static final Semaphore MUTEX = new Semaphore(1, true); // Binary Semaphore To ensure no load and store issues arise for any counters. Usage of volatile variables is not permitted, so a mutex is necessary.
     public static final Semaphore STORE_CAPACITY_GROUP = new Semaphore(0, true); // Counting Semaphore that will allow customer to enter in groups of size Store Capacity.
     public static final Semaphore WAIT_FOR_EMPLOYEES = new Semaphore(0, true); // Counting Semaphore that will be used by Manager to wait and will be released by all the Employees.
@@ -27,8 +27,8 @@ public class Store {
     public static final Semaphore MUTEX2 = new Semaphore(1, true); // Binary Semaphore To ensure no load and store issues arise for any counters. Usage of volatile variables is not permitted, so a mutex is necessary.
     public static final Semaphore ELDER_CHECKOUT_IN = new Semaphore(0, true); // Binary Semaphore that will make the Employee wait until an elderly person arrives to pay.
     public static final Semaphore ELDER_CHECKOUT_PAY = new Semaphore(1, true); // Binary Semaphore that will make the Employee wait until an elderly person arrives to pay.
+    public static Semaphore[] Register_Availability = new Semaphore[NumRegisters]; // This will be used to check if the current Register is available.
 
-    public static boolean[] Register_Availability = new boolean[NumRegisters]; // This will be used to check if the current Register is available, and will be made thread safe using a mutex semaphore.
     public static String CurrentCustomer;
     public static final int ElderlyCheckoutNum = RandomInt(1, NumRegisters); // A random register is picked to be designated for only the Elderly. I do this so I don't hard code a register and want this to work for different checkout sizes.
     public static int CustomerInCount = 0; // Count the customers that are going in.
@@ -52,11 +52,6 @@ public class Store {
         Managers = new Manager[1]; // Only one manager is referenced in the assignment, and they will open up the store and leave after there's no more customers in queue to enter.
         Employees = new Employee[NumRegisters]; // For Project 2 we are told that we need as many Employees as we have registers.
         Customers = new Customer[NumCustomers]; // Customer count will be determined by the input argument as requested.
-        try {
-            STORE_IS_OPEN_SEMAPHORE.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         // Creates the threads
         // Although Manager and Employee(s) do not need a for loop for initialization. I'm keeping them this way just in case their count scales. Program would have to be altered if this happens though.
