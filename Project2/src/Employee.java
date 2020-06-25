@@ -41,16 +41,9 @@ public class Employee implements Runnable {
         do {
 
 
-
-           /* if(Store.CustomerOutCount == Store.NumCustomers){
-                break; //If all the customers have shopped for today
-            }*/
-
             if(Integer.parseInt(this.Number) == Store.ElderlyCheckoutNum){ // If this is the Employee assigned to the Elderly-only checkout, then serve only the Elderly Semaphore.
                 //ElderlyCheckoutNum is randomly determined between a range of 1 to numRegisters. I've done this so it can work for any sizes of numRegisters should it need to change.
                 //Also I assign the Employee who's number matches the Register chosen to serve the Elderly. I think it makes sense to do so :)
-
-
 
 
                 try {
@@ -60,7 +53,7 @@ public class Employee implements Runnable {
                 }
 
                 try {
-                    Store.MUTEX2.acquire();
+                    Store.MUTEX.acquire();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -74,7 +67,7 @@ public class Employee implements Runnable {
                 }
 
                 Store.ELDER_CHECKOUT_PAY.release(); // Release the Elderly Customer because they've now paid and they can now leave.
-                Store.MUTEX2.release();
+                Store.MUTEX.release();
 
             }
 
@@ -88,7 +81,7 @@ public class Employee implements Runnable {
                 }
 
                 try {
-                    Store.MUTEX2.acquire();
+                    Store.MUTEX.acquire();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -102,7 +95,7 @@ public class Employee implements Runnable {
                 }
 
                 Store.CHECKOUT_REGISTER.release(); // Release the regular customer from paying.
-                Store.MUTEX2.release();
+                Store.MUTEX.release();
 
             }
 

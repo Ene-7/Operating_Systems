@@ -115,23 +115,21 @@ public class Customer implements Runnable {
 
         if(this.isElder){
             Store.ELDER_CHECKOUT_IN.release(); // Allow the Employee to serve you.
+            msg("Finally paying for my stuff.");
+            //I was adding a mutex here? //todo look back here?
+            Store.MUTEX.release();
             try {
                 Store.ELDER_CHECKOUT_PAY.acquire(); // Wait until you've paid or done getting your stuff in the grocery bags or what not this can't just happen instantly
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
         else {
-            try {
-                Store.CHECKOUT_REGISTER.acquire();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Store.CHECKOUT_REGISTER.release();
+            msg("Finally paying for my stuff.");
+            Store.MUTEX.release();
         }
 
-
-        Store.MUTEX.release();
 
 
 
