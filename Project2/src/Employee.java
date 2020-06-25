@@ -32,8 +32,11 @@ public class Employee implements Runnable {
             e.printStackTrace();
         }
 
-
         msg("I've made it to the store, and I'm ready to work!");
+
+        Store.WAIT_FOR_EMPLOYEES.release(); // will release the semaphore and eventually once all employees do this, the manager will open the store because everyone came to work.
+
+
 
 
         msg("I'm done for the day!");

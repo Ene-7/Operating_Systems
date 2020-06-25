@@ -42,6 +42,7 @@ public class Customer implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         Store.STORE_IS_OPEN_SEMAPHORE.release(); // release semaphore for the next customer to know the store is open. This will help keep them in order of arrival.
 
         try {
@@ -49,7 +50,11 @@ public class Customer implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         msg("I'm finally inside and can shop. I better stay away from others, they could be sick!");
+
+
+
 
         //Simulate Shop Time
         try {
@@ -59,20 +64,19 @@ public class Customer implements Runnable {
         }
 
 
+
+
         // SELF CHECKOUT SECTION:
 
         msg("I got what I needed. Time to head to the checkout!");
-        this.CustomerThread.setPriority(7); // We increase the priority of the process to simulate the action of rushing to checkout
+
+
         try {
             this.CustomerThread.sleep(Store.RandomInt(2000,5000)); //Sleep for 2 to 5 Seconds to simulate rushing to the checkout
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.CustomerThread.setPriority(5); // Set Priority back to DEFAULT Value.
-        if(!this.isElder){ // If the current customer is not an Elderly Person, they should yield for the Elderly that may also be in line to a register.
-            this.CustomerThread.yield();
-            this.CustomerThread.yield();
-        } // This should allow the elderly to get to the checkout first.
+
 
 
 
