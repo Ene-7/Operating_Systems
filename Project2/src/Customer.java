@@ -36,7 +36,7 @@ public class Customer implements Runnable {
         catch (InterruptedException e) {
             e.printStackTrace();
         }
-        msg("I've arrived at the stores' parking lot, and I'm now in the queue waiting to go in.");
+        msg("I've arrived at the store's parking lot, and I'm now in the queue waiting to go in.");
 
 
         // Wait for Store to Open:
@@ -112,6 +112,7 @@ public class Customer implements Runnable {
             e.printStackTrace();
         }
 
+        Store.MUTEX2.release();
         Store.CurrentCustomer = this.Name; // Tells the name to the Store so the Employee can call you over when they're free to take another customer. We need some way for the Employee to know who's supposed to be called next
         // I can't think of a better way...
 
@@ -146,8 +147,6 @@ public class Customer implements Runnable {
             }
 
         }
-
-
 
 
 

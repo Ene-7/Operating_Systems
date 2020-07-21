@@ -26,7 +26,7 @@ public class Store {
     public static final Semaphore CHECKOUT_REGISTER = new Semaphore(0, true); // Counting Semaphore for the Checkout.
     public static final Semaphore ELDER_CHECKOUT_IN = new Semaphore(0, true); // Binary Semaphore that will make the Employee wait until an elderly person arrives to pay.
     public static final Semaphore ELDER_CHECKOUT_PAY = new Semaphore(1, true); // Binary Semaphore that will make the Employee wait until an elderly person arrives to pay.
-    public static final Semaphore MUTEX2 = new Semaphore(1, true); // Binary Semaphore To ensure no load and store issues arise for any counters. Usage of volatile variables is not permitted, so a mutex is necessary.
+    public static final Semaphore MUTEX2 = new Semaphore(0, true); // Binary Semaphore To ensure no load and store issues arise for any counters. Usage of volatile variables is not permitted, so a mutex is necessary.
 
 
     public static Semaphore[] CUSTOMER_EXIT_SEMAPHORE; // Will hold all the Customers Blocked until an Employee gets out and lets them leave in order.
