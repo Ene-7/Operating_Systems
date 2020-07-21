@@ -40,19 +40,20 @@ public class Employee implements Runnable {
 
         do {
 
+            try {
+                Store.MUTEX2.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-            if(Integer.parseInt(this.Number) == Store.ElderlyCheckoutNum){ // If this is the Employee assigned to the Elderly-only checkout, then serve only the Elderly Semaphore.
+
+            if(Integer.parseInt(this.Number) == Store.ElderlyCheckoutNum){
+                // If this is the Employee assigned to the Elderly-only checkout, then serve only the Elderly Semaphore.
                 //ElderlyCheckoutNum is randomly determined between a range of 1 to numRegisters. I've done this so it can work for any sizes of numRegisters should it need to change.
                 //Also I assign the Employee who's number matches the Register chosen to serve the Elderly. I think it makes sense to do so :)
 
                 try {
                     Store.ELDER_CHECKOUT_IN.acquire(); // Wait until an Elderly customer shows up to pay.
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    Store.MUTEX2.acquire();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -68,7 +69,7 @@ public class Employee implements Runnable {
                 Store.ELDER_CHECKOUT_PAY.release(); // Release the Elderly Customer because they've now paid and they can now leave.
                 Store.MUTEX2.release();
 
-            } // IF
+            } // IF ELDER
 
 
             else { // Else, the this is the other Employees working the regular Checkout registers and must serve regular people.
@@ -99,7 +100,7 @@ public class Employee implements Runnable {
 
                 Store.MUTEX2.release();
 
-            }
+            } // ELSE REGULAR CUSTOMER
 
         } while (Store.CustomerOutCount != Store.NumCustomers);
 
@@ -112,7 +113,6 @@ public class Employee implements Runnable {
             for(int i = 0; i < Store.CUSTOMER_EXIT_SEMAPHORE.length; i++){
                 Store.CUSTOMER_EXIT_SEMAPHORE[i].release();
             }
-
         }
 
         msg("I'm done for the day!");
